@@ -1,0 +1,65 @@
+# ──────────────────────────────────────
+# Axon .gitignore
+# ──────────────────────────────────────
+
+# Secrets & Credentials
+ServiceAccountKey.json
+firebase-credentials.json
+*.pem
+*.key
+
+# Environment files
+.env
+.env.local
+.env.*.local
+backend/.env
+frontend/.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+frontend/.next/
+frontend/node_modules/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Uploads (runtime generated)
+uploads/
+*.mp3
+*.wav
+
+# Logs
+*.log
+npm-debug.log*
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
