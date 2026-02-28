@@ -145,3 +145,14 @@ async def db_health(db: AsyncSession = Depends(get_db)):
         return {"database": "ok"}
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"Database error: {str(e)}")
+
+
+@router.get("/health/redis")
+async def redis_health():
+    """Check Redis connectivity."""
+    from app.core.redis import redis_client
+    try:
+        pong = await redis_client.ping()
+        return {"redis": "ok" if pong else "error"}
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Redis error: {str(e)}")

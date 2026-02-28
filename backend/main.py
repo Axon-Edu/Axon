@@ -1,13 +1,15 @@
 """Axon Learning Platform — FastAPI main application."""
 
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from app.core.config import get_settings
 from app.core.auth import init_firebase
 from app.api.routes import router as api_router
 import os
+import traceback
 
 settings = get_settings()
 
@@ -38,6 +40,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# Global exception handler — ensures CORS headers are present even on 500 errors
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    """Catch unhandled exceptions so they pass through CORS middleware."""
+    traceback.print_exc()
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal server error. Check backend logs."},
+    )
+
 
 # Static files for uploads
 app.mount("/uploads", StaticFiles(directory=settings.UPLOAD_DIR), name="uploads")
