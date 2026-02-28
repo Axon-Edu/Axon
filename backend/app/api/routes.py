@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from app.core.database import get_db
 from app.core.auth import verify_firebase_token
 from app.models.models import User, StudentProfile, Subject, Chapter
@@ -60,7 +61,9 @@ async def get_current_user(
 ):
     """Get the current authenticated user's profile."""
     result = await db.execute(
-        select(User).where(User.firebase_uid == token["uid"])
+        select(User)
+        .options(selectinload(User.student_profile))
+        .where(User.firebase_uid == token["uid"])
     )
     user = result.scalar_one_or_none()
     if not user:
