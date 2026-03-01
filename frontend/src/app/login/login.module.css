@@ -18,11 +18,12 @@
   height: 3px;
   border-radius: 2px;
   flex: 1;
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--border-color);
+  opacity: 0.5;
 }
 
 .progressActive {
-  background: var(--white);
+  background: var(--text-primary);
 }
 
 .topBar {
@@ -44,12 +45,12 @@
 }
 
 .topBarText {
-  color: #ccc;
+  color: var(--text-secondary);
   font-size: 13px;
 }
 
 .topBarTime {
-  color: #888;
+  color: var(--text-muted);
   font-size: 12px;
   margin-left: auto;
   margin-right: 8px;
@@ -63,7 +64,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ccc;
+  color: var(--text-secondary);
   font-size: 14px;
   cursor: pointer;
 }
@@ -99,7 +100,7 @@
 }
 
 .desc {
-  color: #999;
+  color: var(--text-secondary);
   font-size: 12px;
   line-height: 1.6;
   max-width: 240px;
@@ -138,7 +139,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--white);
   font-size: 16px;
   cursor: pointer;
 }
@@ -151,7 +152,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--white);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -187,18 +188,18 @@
 }
 
 .input {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--overlay-bg);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 12px 16px;
-  color: var(--white);
+  color: var(--text-primary);
   font-size: 13px;
 }
 
 .signupToggle {
   margin-top: 12px;
   font-size: 11px;
-  color: #888;
+  color: var(--text-muted);
 }
 
 .signupToggle span {

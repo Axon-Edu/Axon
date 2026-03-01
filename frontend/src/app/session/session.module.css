@@ -12,7 +12,7 @@
 }
 
 .detailHero {
-    background: #b89af5;
+    background: var(--hero-bg);
     height: 200px;
     /* Slightly reduced for phone height */
     position: relative;
@@ -49,7 +49,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
+    color: var(--white);
     font-size: 16px;
     cursor: pointer;
 }
@@ -59,7 +59,7 @@
     bottom: 16px;
     left: 16px;
     background: rgba(255, 255, 255, 0.9);
-    color: #111;
+    color: var(--black);
     font-size: 11px;
     font-weight: 600;
     padding: 4px 12px;
@@ -79,7 +79,7 @@
     align-items: center;
     justify-content: center;
     font-size: 18px;
-    color: #111;
+    color: var(--black);
     cursor: pointer;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
     z-index: 3;
@@ -102,7 +102,7 @@
 }
 
 .detailSpeakers {
-    color: #888;
+    color: var(--text-muted);
     font-size: 12px;
     margin-bottom: 16px;
 }
@@ -128,7 +128,7 @@
 }
 
 .tabInactive {
-    color: #888;
+    color: var(--text-muted);
 }
 
 /* Chat area integration */
@@ -213,7 +213,7 @@
 .infoIcon {
     width: 32px;
     height: 32px;
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--overlay-bg);
     border-radius: 10px;
     display: flex;
     align-items: center;

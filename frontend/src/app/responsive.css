@@ -5,7 +5,7 @@
 .app-container {
     width: 100%;
     min-height: 100vh;
-    background: var(--dark);
+    background: var(--bg-body);
     display: flex;
     flex-direction: column;
 }
@@ -24,7 +24,7 @@
 @media (min-width: 1024px) {
     .app-container {
         flex-direction: row !important;
-        background: #000;
+        background: var(--bg-desktop);
         padding: 0;
     }
 
@@ -51,7 +51,7 @@
     .app-container {
         flex-direction: row !important;
         /* Sidebar on side for tablet too */
-        background: #111;
+        background: var(--bg-desktop);
     }
 
     .main-content {

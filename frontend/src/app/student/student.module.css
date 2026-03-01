@@ -45,7 +45,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #ccc;
+    color: var(--text-secondary);
     font-size: 15px;
     cursor: pointer;
     position: relative;
@@ -103,7 +103,7 @@
 
 .tabInactive {
     background: var(--gray);
-    color: #aaa;
+    color: var(--text-muted);
 }
 
 .coursesGrid {
@@ -170,7 +170,7 @@
 
 .courseMeta {
     font-size: 10px;
-    color: rgba(0, 0, 0, 0.6);
+    color: var(--text-secondary);
     position: relative;
     z-index: 1;
 }
@@ -178,7 +178,7 @@
 /* Event Specifics */
 .eventTimeBadge {
     background: rgba(255, 255, 255, 0.85);
-    color: #111;
+    color: var(--black);
     font-size: 11px;
     font-weight: 600;
     padding: 4px 10px;
@@ -242,7 +242,7 @@
 
 .eventMetaText {
     font-size: 11px;
-    color: rgba(0, 0, 0, 0.6);
+    color: var(--text-secondary);
     position: relative;
     z-index: 1;
 }
@@ -276,5 +276,5 @@
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
     padding: 10px 14px !important;
     font-size: 12px !important;
-    color: #ccc !important;
+    color: var(--text-secondary) !important;
 }

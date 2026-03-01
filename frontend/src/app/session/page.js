@@ -51,9 +51,9 @@ export default function SessionDashboard() {
                 <div className={`${styles.container} chat-container-responsive`}>
                     <div className={styles.detailHero}>
                         <svg className={styles.detailHeroArt} viewBox="0 0 320 200" fill="none">
-                            <ellipse cx="160" cy="60" rx="130" ry="50" transform="rotate(-15 160 60)" fill="#c8f55a" opacity="0.65" />
-                            <ellipse cx="240" cy="140" rx="120" ry="45" transform="rotate(10 240 140)" fill="#0d0d0d" opacity="0.3" />
-                            <ellipse cx="80" cy="160" rx="100" ry="40" transform="rotate(-25 80 160)" fill="#c8f55a" opacity="0.5" />
+                            <ellipse cx="160" cy="60" rx="130" ry="50" transform="rotate(-15 160 60)" fill="var(--svg-fill-accent)" opacity="0.65" />
+                            <ellipse cx="240" cy="140" rx="120" ry="45" transform="rotate(10 240 140)" fill="var(--svg-fill-dark)" opacity="0.3" />
+                            <ellipse cx="80" cy="160" rx="100" ry="40" transform="rotate(-25 80 160)" fill="var(--svg-fill-accent)" opacity="0.5" />
                         </svg>
                         <div className={styles.detailNav}>
                             <div className={styles.backBtn} onClick={() => router.push("/student")}>←</div>
@@ -100,7 +100,7 @@ export default function SessionDashboard() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className={uiStyles.detailDesc} style={{ color: '#bbb', fontSize: '12px', lineHeight: '1.7' }}>
+                                <div className={uiStyles.detailDesc} style={{ color: 'var(--text-muted)', fontSize: '12px', lineHeight: '1.7' }}>
                                     In this session, we'll explore **Chemical Reactions and Equations**. You'll learn how to balance equations and identify various types of reactions.
                                 </div>
                             </div>

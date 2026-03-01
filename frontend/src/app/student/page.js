@@ -112,7 +112,7 @@ export default function StudentDashboard() {
                     </div>
 
                     {loadingContent ? (
-                        <p style={{ color: '#888', textAlign: 'center' }}>Loading...</p>
+                        <p style={{ color: 'var(--text-muted)', textAlign: 'center' }}>Loading...</p>
                     ) : (
                         <>
                             <div className={`${styles.coursesGrid} responsive-grid`}>
@@ -124,8 +124,8 @@ export default function StudentDashboard() {
                                         <div key={subject.id} className={styles.courseWrapper}>
                                             <div className={`${uiStyles.card} ${uiStyles.courseCard} ${colorClass}`}>
                                                 <svg className={uiStyles.cardArt} viewBox="0 0 140 130" fill="none">
-                                                    <ellipse cx="30" cy="50" rx="50" ry="22" transform="rotate(-30 30 50)" fill="#b89af5" opacity="0.7" />
-                                                    <ellipse cx="80" cy="80" rx="45" ry="18" transform="rotate(-20 80 80)" fill="#0d0d0d" opacity="0.35" />
+                                                    <ellipse cx="30" cy="50" rx="50" ry="22" transform="rotate(-30 30 50)" fill="var(--svg-fill-accent)" opacity="0.7" />
+                                                    <ellipse cx="80" cy="80" rx="45" ry="18" transform="rotate(-20 80 80)" fill="var(--svg-fill-dark)" opacity="0.35" />
                                                 </svg>
                                                 <div className={styles.rating}>⭐ 4.9</div>
                                                 <div className={styles.arrowBtn}>↗</div>
@@ -152,8 +152,8 @@ export default function StudentDashboard() {
                             {/* Event Card: Design Conference */}
                             <div className={`${uiStyles.card} ${uiStyles.eventCard} ${uiStyles.cardPurple}`}>
                                 <svg className={uiStyles.cardArt} viewBox="0 0 280 100" fill="none">
-                                    <ellipse cx="160" cy="20" rx="90" ry="30" transform="rotate(-10 160 20)" fill="#c8f55a" opacity="0.6" />
-                                    <ellipse cx="220" cy="60" rx="70" ry="25" transform="rotate(5 220 60)" fill="#0d0d0d" opacity="0.25" />
+                                    <ellipse cx="160" cy="20" rx="90" ry="30" transform="rotate(-10 160 20)" fill="var(--svg-fill-accent)" opacity="0.6" />
+                                    <ellipse cx="220" cy="60" rx="70" ry="25" transform="rotate(5 220 60)" fill="var(--svg-fill-dark)" opacity="0.25" />
                                 </svg>
                                 <div className={styles.eventTimeBadge}>Today at 05:00 PM</div>
                                 <div className={styles.attendees}>

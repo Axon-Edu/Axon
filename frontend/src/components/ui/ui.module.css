@@ -51,7 +51,7 @@
     height: 38px;
     background: var(--gray);
     border-radius: 50%;
-    color: #ccc;
+    color: var(--text-secondary);
     font-size: 15px;
 }
 
@@ -150,7 +150,7 @@
 
 .tabInactive {
     background: var(--gray);
-    color: #aaa;
+    color: var(--text-muted);
 }
 
 /* PROGRESS BAR */
@@ -163,11 +163,12 @@
     height: 3px;
     border-radius: 2px;
     flex: 1;
-    background: rgba(255, 255, 255, 0.15);
+    background: var(--border-color);
+    opacity: 0.5;
 }
 
 .progressActive {
-    background: var(--white);
+    background: var(--text-primary);
 }
 
 /* CHAT BUBBLES */

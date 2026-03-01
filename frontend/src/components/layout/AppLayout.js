@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import BottomNav from "./BottomNav";
+import ThemeToggle from "./ThemeToggle";
 import "@/app/responsive.css";
 
 export default function AppLayout({ children }) {
@@ -28,6 +29,7 @@ export default function AppLayout({ children }) {
 
     return (
         <div className={`app-container ${isSidebarCollapsed ? "sidebar-collapsed" : "sidebar-active"} app-layout-active`}>
+            <ThemeToggle />
             {!isMobile && <Sidebar isCollapsed={isSidebarCollapsed} />}
 
             <main className="main-content">
