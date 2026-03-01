@@ -23,17 +23,20 @@ const firebaseConfig = {
     appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "",
 };
 
-// Initialize Firebase only on client side with valid config
+// Initialize Firebase
 let app = null;
 let auth = null;
 
-if (typeof window !== "undefined" && firebaseConfig.apiKey) {
+if (typeof window !== "undefined") {
     app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
     auth = getAuth(app);
 }
+
 const googleProvider = new GoogleAuthProvider();
+const isMockKey = firebaseConfig.apiKey === "mock_key";
 
 export {
+    app,
     auth,
     googleProvider,
     signInWithPopup,
@@ -41,4 +44,5 @@ export {
     createUserWithEmailAndPassword,
     signOut,
     onAuthStateChanged,
+    isMockKey,
 };

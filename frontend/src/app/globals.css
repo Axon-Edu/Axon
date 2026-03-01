@@ -1,34 +1,83 @@
-/* Axon Global Styles — Dark Theme Design System */
-
 :root {
-  /* Colors */
-  --bg-primary: #0a0a1a;
-  --bg-secondary: #1a0a2e;
-  --bg-tertiary: #0a1628;
-  --surface: rgba(255, 255, 255, 0.04);
-  --surface-hover: rgba(255, 255, 255, 0.08);
-  --border: rgba(255, 255, 255, 0.08);
-  --border-hover: rgba(255, 255, 255, 0.15);
+  --radius-btn: 24px;
+  --radius-card: 20px;
+  --font-heading: 'Clash Display', sans-serif;
+  --font-body: 'Satoshi', sans-serif;
+}
+
+:root[data-theme="dark"] {
+  --accent-purple: #b89af5;
+  --accent-pink: #f5a8d4;
+  --accent-amber: #f5e87a;
+  --accent-green: #c8f55a;
+  --accent-blue: #70d6ff;
+
+  --bg-primary: #0d0d0d;
+  --bg-secondary: #161616;
+  --bg-tertiary: #1e1e1e;
+  --bg-body: #000000;
+  --bg-desktop: #111111;
 
   --text-primary: #ffffff;
   --text-secondary: rgba(255, 255, 255, 0.7);
-  --text-muted: rgba(255, 255, 255, 0.45);
+  --text-muted: #888888;
 
-  --accent-purple: #7c3aed;
-  --accent-pink: #ec4899;
-  --accent-amber: #f59e0b;
-  --accent-green: #10b981;
-  --accent-blue: #3b82f6;
+  --border-color: rgba(255, 255, 255, 0.05);
+  --overlay-bg: rgba(255, 255, 255, 0.05);
 
-  /* Font */
-  --font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  /* SVG & Art colors */
+  --svg-fill-accent: currentColor;
+  --svg-fill-dark: #0d0d0d;
+  --hero-bg: var(--accent-purple);
 
-  /* Radii */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
-  --radius-2xl: 24px;
+  /* Legacy mapping for compatibility */
+  --black: #0d0d0d;
+  --dark: #161616;
+  --card-dark: #1e1e1e;
+  --green: var(--accent-green);
+  --purple: var(--accent-purple);
+  --pink: var(--accent-pink);
+  --yellow: var(--accent-amber);
+  --white: #ffffff;
+  --gray: #2a2a2a;
+}
+
+:root[data-theme="light"] {
+  /* Brighter warm pastels */
+  --accent-pink: #f1b3b3;
+  --accent-amber: #fde2b3;
+  --accent-purple: #dad0f5;
+  --accent-green: #b9ecd9;
+  --accent-blue: #bde6f3;
+
+  --bg-primary: #fdfcf9;
+  --bg-secondary: #f6f1ea;
+  --bg-tertiary: #efeadf;
+  --bg-body: #fdfcf9;
+  --bg-desktop: #f6f1ea;
+
+  --text-primary: #000000;
+  --text-secondary: #000000;
+  --text-muted: #000000;
+
+  --border-color: #000000;
+  --overlay-bg: rgba(0, 0, 0, 0.08);
+
+  /* SVG & Art colors for Light mode */
+  --svg-fill-accent: rgba(0, 0, 0, 0.15);
+  --svg-fill-dark: rgba(0, 0, 0, 0.08);
+  --hero-bg: var(--bg-tertiary);
+
+  /* Mappings to keep existing logic working */
+  --black: var(--bg-primary);
+  --dark: var(--bg-secondary);
+  --card-dark: var(--bg-tertiary);
+  --green: var(--accent-green);
+  --purple: var(--accent-purple);
+  --pink: var(--accent-pink);
+  --yellow: var(--accent-amber);
+  --white: var(--text-primary);
+  --gray: #e0d9cf;
 }
 
 * {
@@ -37,65 +86,69 @@
   box-sizing: border-box;
 }
 
-html,
 body {
-  font-family: var(--font-family);
-  background: var(--bg-primary);
+  background: var(--bg-body);
   color: var(--text-primary);
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+/* FLEXIBLE CONTAINER SYSTEM */
+.phoneShell {
+  width: 100%;
+  margin: 0 auto;
+  background: var(--dark);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  transition: all 0.3s ease;
+}
+
+@media (min-width: 641px) {
+  body {
+    padding: 2.5vh 0;
+    display: flex;
+    justify-content: center;
+    background: var(--bg-desktop);
+  }
+
+  .phoneShell {
+    width: 90%;
+    max-width: 480px;
+    height: 90vh;
+    min-height: 700px;
+    border-radius: 40px;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+  }
+}
+
+@media (min-width: 1025px) {
+  .phoneShell {
+    max-width: 1200px;
+    border-radius: 20px;
+  }
+}
+
+.phoneShell::-webkit-scrollbar {
+  display: none;
+}
+
+.phoneShell {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
 }
 
 a {
   color: inherit;
   text-decoration: none;
-}
-
-/* Loading Screen */
-.loading-screen {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary), var(--bg-tertiary));
-  gap: 1rem;
-}
-
-.loading-screen p {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-}
-
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid var(--border);
-  border-top-color: var(--accent-purple);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
 }
