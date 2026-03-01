@@ -6,7 +6,7 @@
  */
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { auth, onAuthStateChanged, signOut } from "@/lib/firebase";
+import { auth, onAuthStateChanged, signOut, isMockKey } from "@/lib/firebase";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -24,7 +24,7 @@ export function AuthProvider({ children }) {
 
     useEffect(() => {
         if (!auth) {
-            setLoading(false);
+            setTimeout(() => setLoading(false), 0);
             return;
         }
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -53,6 +53,10 @@ export function AuthProvider({ children }) {
                 } catch (err) {
                     console.error("Error fetching user profile:", err);
                 }
+            } else if (!auth || isMockKey) {
+                // Mock user for UI presentation when Firebase keys are invalid
+                setUser({ uid: "mock-user-123", email: "mock@example.com" });
+                setUserProfile({ full_name: "Mock Student", role: "student" });
             } else {
                 setUser(null);
                 setUserProfile(null);

@@ -1,27 +1,39 @@
 /* Axon Global Styles — Dark Theme Design System */
 
 :root {
-  /* Colors */
-  --bg-primary: #0a0a1a;
-  --bg-secondary: #1a0a2e;
-  --bg-tertiary: #0a1628;
-  --surface: rgba(255, 255, 255, 0.04);
-  --surface-hover: rgba(255, 255, 255, 0.08);
-  --border: rgba(255, 255, 255, 0.08);
-  --border-hover: rgba(255, 255, 255, 0.15);
+  /* LearnHub Vibrant Palette */
+  --black: #0d0d0d;
+  --dark: #161616;
+  --card-dark: #1e1e1e;
+  --vibrant-green: #c8f55a;
+  --vibrant-purple: #b89af5;
+  --vibrant-pink: #f5a8d4;
+  --vibrant-yellow: #f5e87a;
+  --white: #ffffff;
+  --gray: #212121;
+  --text-muted: #888;
+
+  /* Layout & Radii */
+  --radius-btn: 24px;
+  --radius-card: 32px;
+  --radius-pill: 9999px;
+
+  /* Backgrounds */
+  --bg-primary: #111111;
+  --bg-surf-1: #161616;
+  --bg-surf-2: #1e1e1e;
+
+  /* Fonts */
+  --font-heading: 'Clash Display', sans-serif;
+  --font-body: 'Satoshi', sans-serif;
+
+  --surface: #1B1D22;
+  --surface-hover: #22252D;
+  --border: rgba(255, 255, 255, 0.06);
+  --border-hover: rgba(255, 255, 255, 0.12);
 
   --text-primary: #ffffff;
   --text-secondary: rgba(255, 255, 255, 0.7);
-  --text-muted: rgba(255, 255, 255, 0.45);
-
-  --accent-purple: #7c3aed;
-  --accent-pink: #ec4899;
-  --accent-amber: #f59e0b;
-  --accent-green: #10b981;
-  --accent-blue: #3b82f6;
-
-  /* Font */
-  --font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
   /* Radii */
   --radius-sm: 8px;
@@ -29,6 +41,9 @@
   --radius-lg: 16px;
   --radius-xl: 20px;
   --radius-2xl: 24px;
+  --radius-btn: 24px;
+  --radius-card: 28px;
+  --radius-pill: 9999px;
 }
 
 * {
@@ -39,11 +54,19 @@
 
 html,
 body {
-  font-family: var(--font-family);
-  background: var(--bg-primary);
-  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  color: var(--white);
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
 }
 
 a {

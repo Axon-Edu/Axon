@@ -2,13 +2,20 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/AuthContext";
+import { useRouter } from "next/navigation";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import Chip from "@/components/ui/Chip";
 import styles from "./student.module.css";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
+import { isMockKey } from "@/lib/firebase";
+
 export default function StudentDashboard() {
     const { user, userProfile, logout } = useAuth();
+    const router = useRouter();
     const [subjects, setSubjects] = useState([]);
     const [chaptersBySubject, setChaptersBySubject] = useState({});
     const [loadingContent, setLoadingContent] = useState(true);
@@ -18,16 +25,36 @@ export default function StudentDashboard() {
 
         async function fetchContent() {
             try {
+                if (isMockKey) {
+                    // Load mock data directly
+                    const mockSubjects = [
+                        { id: "s1", name: "Science", grade: "10" },
+                        { id: "s2", name: "Mathematics", grade: "10" },
+                        { id: "s3", name: "Social Science", grade: "10" },
+                    ];
+                    setSubjects(mockSubjects);
+                    setChaptersBySubject({
+                        s1: [
+                            { id: "c1", chapter_number: "1", title: "Chemical Reactions" },
+                            { id: "c2", chapter_number: "2", title: "Acids, Bases and Salts" }
+                        ],
+                        s2: [
+                            { id: "c3", chapter_number: "1", title: "Real Numbers" }
+                        ],
+                        s3: []
+                    });
+                    setLoadingContent(false);
+                    return;
+                }
+
                 const token = await user.getIdToken();
                 const headers = { Authorization: `Bearer ${token}` };
 
-                // Fetch subjects
                 const subRes = await fetch(`${API_URL}/api/subjects`, { headers });
                 if (!subRes.ok) throw new Error("Failed to fetch subjects");
                 const subjectsData = await subRes.json();
                 setSubjects(subjectsData);
 
-                // Fetch chapters for each subject
                 const chaptersMap = {};
                 for (const subject of subjectsData) {
                     const chapRes = await fetch(
@@ -41,6 +68,8 @@ export default function StudentDashboard() {
                 setChaptersBySubject(chaptersMap);
             } catch (err) {
                 console.error("Error fetching content:", err);
+                // Last resort fallback
+                setSubjects([{ id: "s1", name: "Science", grade: "10" }]);
             } finally {
                 setLoadingContent(false);
             }
@@ -55,33 +84,41 @@ export default function StudentDashboard() {
         "Social Science": "🌍",
     };
 
+    const handleStartSession = () => {
+        router.push("/session");
+    };
+
+    const getSubjectColor = (index) => {
+        const colors = ["green", "pink", "purple", "yellow"];
+        return colors[index % colors.length];
+    };
+
     return (
         <ProtectedRoute allowedRoles={["student"]}>
-            <div className={styles.container}>
-                <header className={styles.header}>
-                    <div className={styles.greeting}>
-                        <span className={styles.mascot}>⚡</span>
-                        <div>
-                            <h1>Hey, {userProfile?.full_name?.split(" ")[0] || "there"}! 👋</h1>
-                            <p>Ready to learn something awesome today?</p>
+            <div className="phoneShell">
+                <div className={styles.container}>
+                    <header className={styles.userHeader}>
+                        <div className={styles.avatar}>👤</div>
+                        <div className={styles.userName}>
+                            {userProfile?.full_name || "Student"}
                         </div>
-                    </div>
-                    <button className={styles.logoutBtn} onClick={logout}>Sign Out</button>
-                </header>
+                        <div className={styles.headerActions}>
+                            <div className={styles.iconBtn}>🔍</div>
+                            <div className={styles.iconBtn} onClick={logout}>🚪</div>
+                        </div>
+                    </header>
 
-                <div className={styles.streakBar}>
-                    <div className={styles.streakItem}>
-                        <span className={styles.streakIcon}>🔥</span>
-                        <span>0 day streak</span>
-                    </div>
-                    <div className={styles.streakItem}>
-                        <span className={styles.streakIcon}>📚</span>
-                        <span>0 sessions</span>
-                    </div>
-                </div>
+                    <h1 className={styles.sectionTitle}>
+                        My courses <span>({subjects.length})</span>
+                    </h1>
 
-                <section className={styles.subjectsSection}>
-                    <h2>Your Subjects</h2>
+                    <div className={styles.filterTabs}>
+                        <div className={`${styles.tab} ${styles.tabActive}`}>All</div>
+                        <div className={`${styles.tab} ${styles.tabInactive}`}>Science</div>
+                        <div className={`${styles.tab} ${styles.tabInactive}`}>Math</div>
+                        <div className={`${styles.tab} ${styles.tabInactive}`}>History</div>
+                    </div>
+
                     {loadingContent ? (
                         <div className={styles.emptyState}>
                             <p>Loading subjects...</p>
@@ -92,43 +129,48 @@ export default function StudentDashboard() {
                         </div>
                     ) : (
                         <div className={styles.subjectGrid}>
-                            {subjects.map((subject) => (
-                                <div key={subject.id} className={styles.subjectCard}>
-                                    <div className={styles.subjectIcon}>
-                                        {SUBJECT_ICONS[subject.name] || "📖"}
-                                    </div>
-                                    <h3>{subject.name}</h3>
-                                    <p>Class {subject.grade} • NCERT</p>
-                                    <div className={styles.chapters}>
-                                        {(chaptersBySubject[subject.id] || []).map((chapter) => (
-                                            <div key={chapter.id} className={styles.chapterItem}>
-                                                <span>
-                                                    Ch {chapter.chapter_number}: {chapter.title}
-                                                </span>
-                                                <button className={styles.startBtn}>
-                                                    Start Session
-                                                </button>
-                                            </div>
-                                        ))}
-                                        {(!chaptersBySubject[subject.id] ||
-                                            chaptersBySubject[subject.id].length === 0) && (
-                                                <p style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.85rem" }}>
-                                                    No chapters uploaded yet.
+                            {subjects.map((subject, idx) => {
+                                const color = getSubjectColor(idx);
+                                const chapters = chaptersBySubject[subject.id] || [];
+
+                                return (
+                                    <div key={subject.id} className={styles.subjectWrapper}>
+                                        <Card
+                                            color={color}
+                                            blob={true}
+                                            className={`${styles.subjectCard} ${styles[`subjectCard${color.charAt(0).toUpperCase() + color.slice(1)}`]}`}
+                                            style={{ backgroundColor: `var(--vibrant-${color})` }}
+                                        >
+                                            <div className={styles.rating}>⭐ 4.9</div>
+                                            <div className={styles.arrowBtn}>↗</div>
+                                            <div className={styles.subjectInfo}>
+                                                <h3>{subject.name}</h3>
+                                                <p className={styles.subjectMeta}>
+                                                    Class {subject.grade} • {chapters.length} lessons
                                                 </p>
-                                            )}
+                                            </div>
+                                        </Card>
+
+                                        <div className={styles.chapterList}>
+                                            {chapters.map((chapter) => (
+                                                <Button
+                                                    key={chapter.id}
+                                                    variant="secondary"
+                                                    className={styles.chapterBtn}
+                                                    onClick={handleStartSession}
+                                                >
+                                                    <span>Ch {chapter.chapter_number}</span>
+                                                    {chapter.title}
+                                                    <span style={{ fontSize: '10px' }}>Start →</span>
+                                                </Button>
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     )}
-                </section>
-
-                <section className={styles.recentSection}>
-                    <h2>Recent Activity</h2>
-                    <div className={styles.emptyState}>
-                        <p>No sessions yet. Start your first lesson! 🚀</p>
-                    </div>
-                </section>
+                </div>
             </div>
         </ProtectedRoute>
     );
