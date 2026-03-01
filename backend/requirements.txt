@@ -9,6 +9,7 @@ sqlalchemy[asyncio]==2.0.36
 asyncpg==0.30.0
 alembic==1.14.1
 pgvector==0.3.6
+supabase>=2.0.0
 
 # Redis
 redis==5.2.1

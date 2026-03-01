@@ -16,6 +16,10 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql+asyncpg://postgres.xxxxx:password@aws-0-ap-south-1.pooler.supabase.com:6543/postgres"
     DATABASE_SYNC_URL: str = "postgresql://postgres.xxxxx:password@aws-0-ap-south-1.pooler.supabase.com:6543/postgres"
 
+    # Supabase Client (for Storage, etc.)
+    SUPABASE_URL: str = ""
+    SUPABASE_ANON_KEY: str = ""
+
     # Redis
     REDIS_URL: str = "redis://localhost:6379/0"
 
