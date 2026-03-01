@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from app.core.database import get_db
 from app.core.auth import verify_firebase_token
 from app.models.models import User, StudentProfile, Subject, Chapter
@@ -60,7 +61,9 @@ async def get_current_user(
 ):
     """Get the current authenticated user's profile."""
     result = await db.execute(
-        select(User).where(User.firebase_uid == token["uid"])
+        select(User)
+        .options(selectinload(User.student_profile))
+        .where(User.firebase_uid == token["uid"])
     )
     user = result.scalar_one_or_none()
     if not user:
@@ -142,3 +145,14 @@ async def db_health(db: AsyncSession = Depends(get_db)):
         return {"database": "ok"}
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"Database error: {str(e)}")
+
+
+@router.get("/health/redis")
+async def redis_health():
+    """Check Redis connectivity."""
+    from app.core.redis import redis_client
+    try:
+        pong = await redis_client.ping()
+        return {"redis": "ok" if pong else "error"}
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Redis error: {str(e)}")
