@@ -8,6 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from app.core.config import get_settings
 from app.core.auth import init_firebase
 from app.api.routes import router as api_router
+from ai_engine.ai_routes import router as ai_router
 import os
 import traceback
 
@@ -58,6 +59,7 @@ app.mount("/uploads", StaticFiles(directory=settings.UPLOAD_DIR), name="uploads"
 
 # API Routes
 app.include_router(api_router, prefix=settings.API_PREFIX)
+app.include_router(ai_router, prefix=settings.API_PREFIX)
 
 
 @app.get("/health")
