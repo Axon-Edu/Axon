@@ -1,119 +1,179 @@
+/* Exact LearnHub UI Components */
+
+/* BUTTONS */
 .button {
-    padding: 0.85rem 1.75rem;
-    border-radius: var(--radius-btn);
-    font-weight: 700;
-    cursor: pointer;
     border: none;
-    display: inline-flex;
+    outline: none;
+    cursor: pointer;
+    font-family: var(--font-body);
+    display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.6rem;
-    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    font-family: var(--font-heading);
-    font-size: 0.95rem;
-    letter-spacing: 0.02em;
+    transition: all 0.2s;
 }
 
 .button:hover {
-    transform: scale(1.02);
+    transform: scale(0.98);
 }
 
-.btnPrimary {
+.btnContinue {
+    flex: 1;
+    height: 48px;
+    background: var(--gray);
+    border-radius: 24px;
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 600;
+    gap: 6px;
+    letter-spacing: 0.5px;
+}
+
+.btnCircle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+}
+
+.btnNext {
+    background: var(--white);
+    color: var(--black);
+    font-size: 18px;
+}
+
+.btnCancel {
+    background: var(--gray);
+    color: var(--white);
+    font-size: 16px;
+}
+
+.btnIcon {
+    width: 38px;
+    height: 38px;
+    background: var(--gray);
+    border-radius: 50%;
+    color: #ccc;
+    font-size: 15px;
+}
+
+.btnRegister {
+    width: 100%;
+    height: 52px;
+    background: var(--white);
+    border-radius: 26px;
+    font-family: var(--font-heading);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--black);
+    letter-spacing: 0.02em;
+}
+
+/* CARDS */
+.card {
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.card:hover {
+    transform: scale(0.98);
+}
+
+.courseCard {
+    padding: 14px;
+    min-height: 130px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.eventCard {
+    padding: 16px;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin-bottom: 12px;
+}
+
+.cardGreen {
+    background-color: var(--green);
+}
+
+.cardPink {
+    background-color: var(--pink);
+}
+
+.cardPurple {
+    background-color: var(--purple);
+}
+
+.cardYellow {
+    background-color: var(--yellow);
+}
+
+.cardArt {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+/* CHIPS & BADGES */
+.badge {
+    background: var(--green);
+    color: var(--black);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 5px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.02em;
+}
+
+.tab {
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.tabActive {
     background: var(--white);
     color: var(--black);
 }
 
-.btnSecondary {
+.tabInactive {
     background: var(--gray);
-    color: var(--white);
+    color: #aaa;
 }
 
-.btnDanger {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
-    border: 1px solid rgba(239, 68, 68, 0.2);
+/* PROGRESS BAR */
+.progressBar {
+    display: flex;
+    gap: 5px;
 }
 
-.card {
-    background: var(--bg-surf-2);
-    border-radius: var(--radius-card);
-    padding: 1.75rem;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.2s ease;
+.progressSegment {
+    height: 3px;
+    border-radius: 2px;
+    flex: 1;
+    background: rgba(255, 255, 255, 0.15);
 }
 
-.card:hover {
-    transform: translateY(-4px);
+.progressActive {
+    background: var(--white);
 }
 
-.chip {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.4rem 1rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    gap: 0.4rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-.chipGreen {
-    background: var(--vibrant-green);
-    color: var(--black);
-}
-
-.chipPurple {
-    background: var(--vibrant-purple);
-    color: var(--black);
-}
-
-.chipPink {
-    background: var(--vibrant-pink);
-    color: var(--black);
-}
-
-.chipYellow {
-    background: var(--vibrant-yellow);
-    color: var(--black);
-}
-
-/* Progress Bar */
-.progressTrack {
-    width: 100%;
-    height: 6px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: var(--radius-pill);
-    overflow: hidden;
-}
-
-.progressFill {
-    height: 100%;
-    transition: width 0.6s cubic-bezier(0.65, 0, 0.35, 1);
-}
-
-.progressGreen {
-    background: var(--vibrant-green);
-}
-
-.progressPurple {
-    background: var(--vibrant-purple);
-}
-
-.progressPink {
-    background: var(--vibrant-pink);
-}
-
-.progressYellow {
-    background: var(--vibrant-yellow);
-}
-
-/* Chat Bubble */
+/* CHAT BUBBLES */
 .chatBubbleWrapper {
     display: flex;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1rem;
     width: 100%;
 }
 
@@ -126,30 +186,20 @@
 }
 
 .chatBubble {
-    max-width: 85%;
-    padding: 1.15rem 1.4rem;
-    font-size: 0.95rem;
-    line-height: 1.6;
-}
-
-.chatBubble.user {
-    background: var(--vibrant-purple);
-    color: var(--black);
-    border-radius: 24px 24px 4px 24px;
-    font-weight: 500;
+    max-width: 80%;
+    padding: 12px 16px;
+    font-size: 14px;
+    line-height: 1.5;
 }
 
 .chatBubble.ai {
-    background: var(--bg-surf-2);
+    background: var(--gray);
     color: var(--white);
-    border-radius: 24px 24px 24px 4px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 18px 18px 18px 4px;
 }
 
-/* Blob utility for Cards */
-.cardBlob {
-    position: absolute;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.15;
+.chatBubble.user {
+    background: var(--purple);
+    color: var(--black);
+    border-radius: 18px 18px 4px 18px;
 }

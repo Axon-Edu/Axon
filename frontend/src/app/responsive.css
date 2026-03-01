@@ -1,0 +1,106 @@
+/* Axon Full-Device Responsive Overrides */
+/* This file contains layout-only overrides to preserve aesthetic styles in globals.css */
+
+/* MOBILE FIRST BASE - FULL SCREEN IMMERSIVE */
+.app-container {
+    width: 100%;
+    min-height: 100vh;
+    background: var(--dark);
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding-bottom: 70px;
+    /* Space for Bottom Nav */
+    transition: all 0.3s ease;
+}
+
+/* DESKTOP LAYOUT (>= 1024px) */
+@media (min-width: 1024px) {
+    .app-container {
+        flex-direction: row !important;
+        background: #000;
+        padding: 0;
+    }
+
+    .main-content {
+        margin-left: 260px !important;
+        width: calc(100% - 260px) !important;
+        max-width: 1400px !important;
+        padding: 40px;
+        min-height: 100vh;
+        border-radius: 0;
+        padding-bottom: 40px;
+        /* No bottom nav space needed on desktop */
+    }
+
+    .sidebar-collapsed .main-content {
+        margin-left: 80px !important;
+        width: calc(100% - 80px) !important;
+    }
+}
+
+
+/* TABLET LAYOUT (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .app-container {
+        flex-direction: row !important;
+        /* Sidebar on side for tablet too */
+        background: #111;
+    }
+
+    .main-content {
+        margin-left: 80px !important;
+        /* Collapsed sidebar width for tablet */
+        width: calc(100% - 80px) !important;
+        padding: 30px;
+        padding-bottom: 30px;
+        /* No bottom nav on tablet */
+    }
+}
+
+
+
+/* GRID RESPONSIVENESS */
+/* Force Grid Columns via high specificity */
+body .responsive-grid {
+    grid-template-columns: 1fr !important;
+}
+
+@media (min-width: 768px) {
+    body .responsive-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+@media (min-width: 1024px) {
+    body .responsive-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        max-width: 1000px;
+    }
+}
+
+
+
+/* SESSION PAGE CHAT CENTERING */
+.chat-container-responsive {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* HIDE PHONE SHELL DECORATION ON DESKTOP IF WRAPPED IN APPLAYOUT */
+.app-layout-active .phoneShell {
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
+    min-height: 100vh !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+}

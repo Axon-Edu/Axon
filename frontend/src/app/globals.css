@@ -1,49 +1,18 @@
-/* Axon Global Styles — Dark Theme Design System */
-
 :root {
-  /* LearnHub Vibrant Palette */
   --black: #0d0d0d;
   --dark: #161616;
   --card-dark: #1e1e1e;
-  --vibrant-green: #c8f55a;
-  --vibrant-purple: #b89af5;
-  --vibrant-pink: #f5a8d4;
-  --vibrant-yellow: #f5e87a;
+  --green: #c8f55a;
+  --purple: #b89af5;
+  --pink: #f5a8d4;
+  --yellow: #f5e87a;
   --white: #ffffff;
-  --gray: #212121;
+  --gray: #2a2a2a;
   --text-muted: #888;
-
-  /* Layout & Radii */
   --radius-btn: 24px;
-  --radius-card: 32px;
-  --radius-pill: 9999px;
-
-  /* Backgrounds */
-  --bg-primary: #111111;
-  --bg-surf-1: #161616;
-  --bg-surf-2: #1e1e1e;
-
-  /* Fonts */
+  --radius-card: 20px;
   --font-heading: 'Clash Display', sans-serif;
   --font-body: 'Satoshi', sans-serif;
-
-  --surface: #1B1D22;
-  --surface-hover: #22252D;
-  --border: rgba(255, 255, 255, 0.06);
-  --border-hover: rgba(255, 255, 255, 0.12);
-
-  --text-primary: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.7);
-
-  /* Radii */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
-  --radius-2xl: 24px;
-  --radius-btn: 24px;
-  --radius-card: 28px;
-  --radius-pill: 9999px;
 }
 
 * {
@@ -52,12 +21,57 @@
   box-sizing: border-box;
 }
 
-html,
 body {
-  background-color: var(--bg-primary);
+  background: #000;
   color: var(--white);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* FLEXIBLE CONTAINER SYSTEM */
+.phoneShell {
+  width: 100%;
+  margin: 0 auto;
+  background: var(--dark);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  transition: all 0.3s ease;
+}
+
+@media (min-width: 641px) {
+  body {
+    padding: 2.5vh 0;
+    display: flex;
+    justify-content: center;
+    background: #111;
+  }
+
+  .phoneShell {
+    width: 90%;
+    max-width: 480px;
+    height: 90vh;
+    min-height: 700px;
+    border-radius: 40px;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+  }
+}
+
+@media (min-width: 1025px) {
+  .phoneShell {
+    max-width: 1200px;
+    border-radius: 20px;
+  }
+}
+
+.phoneShell::-webkit-scrollbar {
+  display: none;
+}
+
+.phoneShell {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 h1,
@@ -72,53 +86,4 @@ h6 {
 a {
   color: inherit;
   text-decoration: none;
-}
-
-/* Loading Screen */
-.loading-screen {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary), var(--bg-tertiary));
-  gap: 1rem;
-}
-
-.loading-screen p {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-}
-
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid var(--border);
-  border-top-color: var(--accent-purple);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
 }

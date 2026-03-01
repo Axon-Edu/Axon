@@ -6,12 +6,12 @@ import { useRouter } from "next/navigation";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
-import Chip from "@/components/ui/Chip";
 import styles from "./student.module.css";
+import uiStyles from "@/components/ui/ui.module.css";
+import { isMockKey } from "@/lib/firebase";
+import AppLayout from "@/components/layout/AppLayout";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-
-import { isMockKey } from "@/lib/firebase";
 
 export default function StudentDashboard() {
     const { user, userProfile, logout } = useAuth();
@@ -26,7 +26,6 @@ export default function StudentDashboard() {
         async function fetchContent() {
             try {
                 if (isMockKey) {
-                    // Load mock data directly
                     const mockSubjects = [
                         { id: "s1", name: "Science", grade: "10" },
                         { id: "s2", name: "Mathematics", grade: "10" },
@@ -68,7 +67,6 @@ export default function StudentDashboard() {
                 setChaptersBySubject(chaptersMap);
             } catch (err) {
                 console.error("Error fetching content:", err);
-                // Last resort fallback
                 setSubjects([{ id: "s1", name: "Science", grade: "10" }]);
             } finally {
                 setLoadingContent(false);
@@ -78,31 +76,25 @@ export default function StudentDashboard() {
         fetchContent();
     }, [user]);
 
-    const SUBJECT_ICONS = {
-        Science: "🔬",
-        Mathematics: "📐",
-        "Social Science": "🌍",
-    };
-
     const handleStartSession = () => {
         router.push("/session");
     };
 
-    const getSubjectColor = (index) => {
-        const colors = ["green", "pink", "purple", "yellow"];
-        return colors[index % colors.length];
+    const getSubjectColorClass = (index) => {
+        const classes = [uiStyles.cardGreen, uiStyles.cardPink, uiStyles.cardPurple, uiStyles.cardYellow];
+        return classes[index % classes.length];
     };
 
     return (
         <ProtectedRoute allowedRoles={["student"]}>
-            <div className="phoneShell">
+            <AppLayout>
                 <div className={styles.container}>
                     <header className={styles.userHeader}>
                         <div className={styles.avatar}>👤</div>
                         <div className={styles.userName}>
-                            {userProfile?.full_name || "Student"}
+                            {userProfile?.full_name || "Yan William"}
                         </div>
-                        <div className={styles.headerActions}>
+                        <div className={styles.headerIcons}>
                             <div className={styles.iconBtn}>🔍</div>
                             <div className={styles.iconBtn} onClick={logout}>🚪</div>
                         </div>
@@ -114,64 +106,68 @@ export default function StudentDashboard() {
 
                     <div className={styles.filterTabs}>
                         <div className={`${styles.tab} ${styles.tabActive}`}>All</div>
-                        <div className={`${styles.tab} ${styles.tabInactive}`}>Science</div>
-                        <div className={`${styles.tab} ${styles.tabInactive}`}>Math</div>
-                        <div className={`${styles.tab} ${styles.tabInactive}`}>History</div>
+                        <div className={`${styles.tab} ${styles.tabInactive}`}>Design</div>
+                        <div className={`${styles.tab} ${styles.tabInactive}`}>Developing</div>
+                        <div className={`${styles.tab} ${styles.tabInactive}`}>UX</div>
                     </div>
 
                     {loadingContent ? (
-                        <div className={styles.emptyState}>
-                            <p>Loading subjects...</p>
-                        </div>
-                    ) : subjects.length === 0 ? (
-                        <div className={styles.emptyState}>
-                            <p>No subjects available yet. Ask your instructor to set up content! 📝</p>
-                        </div>
+                        <p style={{ color: '#888', textAlign: 'center' }}>Loading...</p>
                     ) : (
-                        <div className={styles.subjectGrid}>
-                            {subjects.map((subject, idx) => {
-                                const color = getSubjectColor(idx);
-                                const chapters = chaptersBySubject[subject.id] || [];
+                        <>
+                            <div className={`${styles.coursesGrid} responsive-grid`}>
+                                {subjects.map((subject, idx) => {
+                                    const colorClass = getSubjectColorClass(idx);
+                                    const chapters = chaptersBySubject[subject.id] || [];
 
-                                return (
-                                    <div key={subject.id} className={styles.subjectWrapper}>
-                                        <Card
-                                            color={color}
-                                            blob={true}
-                                            className={`${styles.subjectCard} ${styles[`subjectCard${color.charAt(0).toUpperCase() + color.slice(1)}`]}`}
-                                            style={{ backgroundColor: `var(--vibrant-${color})` }}
-                                        >
-                                            <div className={styles.rating}>⭐ 4.9</div>
-                                            <div className={styles.arrowBtn}>↗</div>
-                                            <div className={styles.subjectInfo}>
-                                                <h3>{subject.name}</h3>
-                                                <p className={styles.subjectMeta}>
-                                                    Class {subject.grade} • {chapters.length} lessons
-                                                </p>
+                                    return (
+                                        <div key={subject.id} className={styles.courseWrapper}>
+                                            <div className={`${uiStyles.card} ${uiStyles.courseCard} ${colorClass}`}>
+                                                <svg className={uiStyles.cardArt} viewBox="0 0 140 130" fill="none">
+                                                    <ellipse cx="30" cy="50" rx="50" ry="22" transform="rotate(-30 30 50)" fill="#b89af5" opacity="0.7" />
+                                                    <ellipse cx="80" cy="80" rx="45" ry="18" transform="rotate(-20 80 80)" fill="#0d0d0d" opacity="0.35" />
+                                                </svg>
+                                                <div className={styles.rating}>⭐ 4.9</div>
+                                                <div className={styles.arrowBtn}>↗</div>
+                                                <div className={styles.courseName}>{subject.name}</div>
+                                                <div className={styles.courseMeta}>{chapters.length} lessons</div>
                                             </div>
-                                        </Card>
 
-                                        <div className={styles.chapterList}>
-                                            {chapters.map((chapter) => (
-                                                <Button
-                                                    key={chapter.id}
-                                                    variant="secondary"
-                                                    className={styles.chapterBtn}
-                                                    onClick={handleStartSession}
-                                                >
-                                                    <span>Ch {chapter.chapter_number}</span>
-                                                    {chapter.title}
-                                                    <span style={{ fontSize: '10px' }}>Start →</span>
-                                                </Button>
-                                            ))}
+                                            <div className={styles.chapterList}>
+                                                {chapters.map((chap) => (
+                                                    <Button
+                                                        key={chap.id}
+                                                        className={styles.chapterBtn}
+                                                        onClick={handleStartSession}
+                                                    >
+                                                        Ch {chap.chapter_number}: {chap.title}
+                                                    </Button>
+                                                ))}
+                                            </div>
                                         </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            {/* Event Card: Design Conference */}
+                            <div className={`${uiStyles.card} ${uiStyles.eventCard} ${uiStyles.cardPurple}`}>
+                                <svg className={uiStyles.cardArt} viewBox="0 0 280 100" fill="none">
+                                    <ellipse cx="160" cy="20" rx="90" ry="30" transform="rotate(-10 160 20)" fill="#c8f55a" opacity="0.6" />
+                                    <ellipse cx="220" cy="60" rx="70" ry="25" transform="rotate(5 220 60)" fill="#0d0d0d" opacity="0.25" />
+                                </svg>
+                                <div className={styles.eventTimeBadge}>Today at 05:00 PM</div>
+                                <div className={styles.attendees}>
+                                    <div className={styles.attendeeAvatar}>👤</div>
+                                    <div className={styles.plusBadge}>+6</div>
+                                </div>
+                                <div className={styles.eventName}>Design Conference</div>
+                                <div className={styles.eventMetaText}>14 speakers · 12 themes</div>
+                                <div className={styles.eventArrow}>↗</div>
+                            </div>
+                        </>
                     )}
                 </div>
-            </div>
+            </AppLayout>
         </ProtectedRoute>
     );
 }
