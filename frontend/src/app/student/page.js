@@ -1,17 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import OnboardingModal from "@/components/OnboardingModal";
 import styles from "./student.module.css";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export default function StudentDashboard() {
     const { user, userProfile, logout } = useAuth();
+    const router = useRouter();
     const [subjects, setSubjects] = useState([]);
     const [chaptersBySubject, setChaptersBySubject] = useState({});
     const [loadingContent, setLoadingContent] = useState(true);
+    const [showOnboarding, setShowOnboarding] = useState(false);
 
     useEffect(() => {
         if (!user) return;
@@ -49,6 +53,15 @@ export default function StudentDashboard() {
         fetchContent();
     }, [user]);
 
+    // Check for onboarding status on mount or when user loads
+    useEffect(() => {
+        if (!user) return;
+        const hasCompletedOnboarding = localStorage.getItem(`onboarding_completed_${user.uid}`);
+        if (!hasCompletedOnboarding) {
+            setShowOnboarding(true);
+        }
+    }, [user]);
+
     const SUBJECT_ICONS = {
         Science: "🔬",
         Mathematics: "📐",
@@ -57,6 +70,12 @@ export default function StudentDashboard() {
 
     return (
         <ProtectedRoute allowedRoles={["student"]}>
+            {showOnboarding && (
+                <OnboardingModal
+                    user={user}
+                    onComplete={() => setShowOnboarding(false)}
+                />
+            )}
             <div className={styles.container}>
                 <header className={styles.header}>
                     <div className={styles.greeting}>
@@ -105,7 +124,10 @@ export default function StudentDashboard() {
                                                 <span>
                                                     Ch {chapter.chapter_number}: {chapter.title}
                                                 </span>
-                                                <button className={styles.startBtn}>
+                                                <button
+                                                    className={styles.startBtn}
+                                                    onClick={() => router.push(`/student/session/${chapter.id}`)}
+                                                >
                                                     Start Session
                                                 </button>
                                             </div>
