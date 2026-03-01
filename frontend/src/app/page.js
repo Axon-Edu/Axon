@@ -35,3 +35,24 @@ export default function HomePage() {
     </div>
   );
 }
+
+xport default function HomePage() {
+  const { user, userProfile, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (loading) return;
+    if (user && userProfile) {
+      router.push(ROLE_DASHBOARDS[userProfile.role] || "/student");
+    } else {
+      router.push("/login");
+    }
+  }, [user, userProfile, loading, router]);
+
+  return (
+    <div className="loading-screen">
+      <div className="loading-spinner" />
+      <p>Loading Axon...</p>
+    </div>
+  );
+}
