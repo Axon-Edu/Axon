@@ -53,6 +53,10 @@ class StudentProfile(Base):
     interests = Column(JSONB, nullable=False, default=list)
     learning_preferences = Column(JSONB, default=dict)
     persona_summary = Column(Text)
+    # --- AI Engine additions ---
+    learning_style_signals = Column(JSONB, default=dict)  # extracted by companion
+    companion_summary = Column(Text)  # rolling LLM summary of companion conversations
+    # ---------------------------
     onboarding_completed = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
@@ -104,11 +108,15 @@ class Chapter(Base):
     title = Column(String(255), nullable=False)
     roadmap = Column(JSONB, nullable=False, default=dict)
     prerequisites = Column(JSONB, default=list)
+    # --- AI Engine additions ---
+    question_bank = Column(JSONB, default=list)  # [{question, type, difficulty, topic_tag, model_answer}]
+    # ---------------------------
     created_at = Column(DateTime, default=datetime.utcnow)
 
     subject = relationship("Subject", back_populates="chapters")
     chunks = relationship("ContentChunk", back_populates="chapter")
     assets = relationship("ContentAsset", back_populates="chapter")
+    learning_states = relationship("ChapterLearningState", back_populates="chapter")
 
     __table_args__ = (
         Index("idx_chapters_subject", "subject_id"),
@@ -194,10 +202,15 @@ class StudentSubjectContext(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     student_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     subject_id = Column(UUID(as_uuid=True), ForeignKey("subjects.id"), nullable=False)
-    comfort_level = Column(String(20))
+    # --- Renamed for AI engine ---
+    confidence_level = Column(String(10))  # was comfort_level; now constrained to low/medium/high
+    anxiety_signals = Column(Text)  # was fears_confusions; specific anxiety markers
+    # --- AI Engine additions ---
+    engagement_pattern = Column(Text)  # e.g. "responds well to examples, dislikes long text"
+    raw_sentiment_response = Column(Text)  # what the student said about science at onboarding
+    # --- Retained ---
     weak_areas = Column(JSONB, default=list)
     preferred_modalities = Column(JSONB, default=list)
-    fears_confusions = Column(Text)
     rolling_summary = Column(Text)
     onboarding_completed = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -205,6 +218,10 @@ class StudentSubjectContext(Base):
 
     __table_args__ = (
         UniqueConstraint("student_id", "subject_id", name="uq_student_subject"),
+        CheckConstraint(
+            "confidence_level IN ('low', 'medium', 'high') OR confidence_level IS NULL",
+            name="ck_confidence_level"
+        ),
     )
 
 
@@ -213,7 +230,7 @@ class LearningSession(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     student_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
-    chapter_id = Column(UUID(as_uuid=True), ForeignKey("chapters.id"), nullable=False)
+    chapter_id = Column(UUID(as_uuid=True), ForeignKey("chapters.id"), nullable=True)  # nullable for companion sessions
     status = Column(String(20), default="active")
     termination_reason = Column(Text)
     started_at = Column(DateTime, default=datetime.utcnow)
@@ -221,6 +238,12 @@ class LearningSession(Base):
     duration_seconds = Column(Integer)
     final_state = Column(String(30))
     subtopics_completed = Column(JSONB, default=list)
+    # --- AI Engine additions ---
+    session_type = Column(String(20), default="teaching")  # 'teaching' or 'companion'
+    is_onboarding = Column(Boolean, default=False)  # companion onboarding flag
+    extracted_context = Column(JSONB)  # structured context from companion session
+    state_at_end = Column(JSONB)  # teaching state machine snapshot for resume
+    # ---------------------------
     created_at = Column(DateTime, default=datetime.utcnow)
 
     student = relationship("User", back_populates="sessions")
@@ -233,9 +256,14 @@ class LearningSession(Base):
             "status IN ('active', 'completed', 'terminated')",
             name="ck_session_status"
         ),
+        CheckConstraint(
+            "session_type IN ('teaching', 'companion')",
+            name="ck_session_type"
+        ),
         Index("idx_sessions_student", "student_id"),
         Index("idx_sessions_chapter", "chapter_id"),
         Index("idx_sessions_status", "status"),
+        Index("idx_sessions_type", "session_type"),
     )
 
 
@@ -300,7 +328,41 @@ class SessionSummary(Base):
 
 
 # ──────────────────────────────────────────────
-# Group D: Notifications
+# Group D: AI Engine — Chapter Learning State
+# ──────────────────────────────────────────────
+
+class ChapterLearningState(Base):
+    """Tracks per-student, per-chapter progress through the teaching roadmap."""
+    __tablename__ = "chapter_learning_states"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    student_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    chapter_id = Column(UUID(as_uuid=True), ForeignKey("chapters.id"), nullable=False)
+    current_node_index = Column(Integer, default=0)  # position in roadmap teaching_nodes
+    prerequisite_status = Column(String(20), default="not_started")  # not_started/passed/remediated
+    node_completion_log = Column(JSONB, default=list)  # [{node_id, understood, attempts, misconceptions_noted, timestamp}]
+    session_count = Column(Integer, default=0)
+    last_session_at = Column(DateTime)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    student = relationship("User")
+    chapter = relationship("Chapter", back_populates="learning_states")
+
+    __table_args__ = (
+        UniqueConstraint("student_id", "chapter_id", name="uq_student_chapter_learning"),
+        CheckConstraint(
+            "prerequisite_status IN ('not_started', 'passed', 'remediated')",
+            name="ck_prereq_status"
+        ),
+        Index("idx_cls_student", "student_id"),
+        Index("idx_cls_chapter", "chapter_id"),
+    )
+
+
+# ──────────────────────────────────────────────
+# Group E: Notifications
 # ──────────────────────────────────────────────
 
 class NotificationLog(Base):

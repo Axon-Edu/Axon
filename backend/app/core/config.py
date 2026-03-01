@@ -26,6 +26,18 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str = ""
     GEMINI_MODEL: str = "gemini-2.0-flash"
 
+    # Groq (LLM inference)
+    GROQ_API_KEY: str = ""
+    GROQ_MODEL: str = "llama-3.3-70b-versatile"
+
+    # Anthropic Claude (AI Engine)
+    ANTHROPIC_API_KEY: str = ""
+    ANTHROPIC_TUTOR_MODEL: str = "claude-sonnet-4-6"  # main tutor
+    ANTHROPIC_HELPER_MODEL: str = "claude-haiku-4-5-20251001"  # evaluator, analogy, companion
+
+    # Tavily (web search for remediation)
+    TAVILY_API_KEY: str = ""
+
     # File Storage
     UPLOAD_DIR: str = "uploads"
 
