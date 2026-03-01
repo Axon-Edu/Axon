@@ -9,6 +9,15 @@ import { isMockKey } from "@/lib/firebase";
 import AppLayout from "@/components/layout/AppLayout";
 import SearchOverlay from "@/components/ui/SearchOverlay";
 import ProfilePopup from "@/components/ui/ProfilePopup";
+import OnboardingModal from "@/components/ui/OnboardingModal";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
+const SUBJECT_ICONS = {
+    Science: "🔬",
+    Mathematics: "📐",
+    "Social Science": "🌍",
+};
 
 export default function StudentDashboard() {
     const { user, userProfile, logout } = useAuth();
@@ -19,6 +28,71 @@ export default function StudentDashboard() {
     const [expandedChapter, setExpandedChapter] = useState(null);
     const [upcomingEvent, setUpcomingEvent] = useState(null);
     const [countdown, setCountdown] = useState("00:00:00");
+    const [showOnboarding, setShowOnboarding] = useState(false);
+    const [subjects, setSubjects] = useState([]);
+    const [chaptersBySubject, setChaptersBySubject] = useState({});
+    const [loadingContent, setLoadingContent] = useState(true);
+
+    // Initial API Fetch
+    useEffect(() => {
+        if (!user) return;
+
+        async function fetchContent() {
+            try {
+                const token = user.getIdToken ? await user.getIdToken() : "mock_token";
+                const headers = { Authorization: `Bearer ${token}` };
+
+                // Fetch subjects
+                const subRes = await fetch(`${API_URL}/api/subjects`, { headers });
+                if (!subRes.ok) throw new Error("Failed to fetch subjects");
+                const fetchedSubjects = await subRes.json();
+                setSubjects(fetchedSubjects);
+
+                // Fetch chapters for each subject
+                const chaptersMap = {};
+                for (const subject of fetchedSubjects) {
+                    const chapRes = await fetch(
+                        `${API_URL}/api/subjects/${subject.id}/chapters`,
+                        { headers }
+                    );
+                    if (chapRes.ok) {
+                        chaptersMap[subject.id] = await chapRes.json();
+                    }
+                }
+                setChaptersBySubject(chaptersMap);
+            } catch (err) {
+                console.log("Backend not reachable or error fetching content, falling back to mock data.", err.message);
+
+                // VERY IMPORTANT: FALLBACK TO MOCK DATA SO UI REMAINS BEAUTIFUL
+                setSubjects(subjectsData);
+                const mockChaptersMap = {};
+                subjectsData.forEach(sub => {
+                    mockChaptersMap[sub.id] = sub.chapters;
+                });
+                setChaptersBySubject(mockChaptersMap);
+            } finally {
+                setLoadingContent(false);
+            }
+        }
+
+        fetchContent();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user]);
+
+    // Check if onboarding is completed on mount
+    useEffect(() => {
+        const checkOnboarding = () => {
+            const userId = user?.uid || user?.id || 'guest';
+            const isCompleted = localStorage.getItem(`onboarding_completed_${userId}`);
+            if (!isCompleted) {
+                setShowOnboarding(true);
+            }
+        };
+
+        // Short timeout to ensure hydration and user object is ready
+        const timeout = setTimeout(checkOnboarding, 500);
+        return () => clearTimeout(timeout);
+    }, [user]);
 
     // Mock data
     const streak = 5;
@@ -294,33 +368,43 @@ export default function StudentDashboard() {
                     <div className={styles.sectionHeader}>
                         <h2 className={styles.sectionTitle}>Subjects</h2>
                     </div>
-                    <div className={styles.subjectsGrid}>
-                        {subjectsData.map((subject) => (
-                            <div key={subject.id} className={styles.subjectCard} onClick={() => openSubjectPopup(subject)}>
-                                <div className={styles.subjectArt}>
-                                    <svg viewBox="0 0 200 120" fill="none">
-                                        <ellipse cx="140" cy="20" rx="80" ry="30" transform="rotate(-20 140 20)" fill="var(--svg-fill-accent)" opacity="0.5" />
-                                        <ellipse cx="60" cy="90" rx="60" ry="25" transform="rotate(15 60 90)" fill="var(--svg-fill-dark)" opacity="0.3" />
-                                    </svg>
-                                </div>
-                                <div className={styles.subjectIcon}>{subject.icon}</div>
-                                <div className={styles.subjectName}>{subject.name}</div>
-                                <div className={styles.subjectMeta}>{subject.chapters.length} chapters</div>
-                                <div className={styles.subjectProgress}>
-                                    <div className={styles.progressTrack}>
-                                        <div className={styles.progressFill} style={{ width: `${subject.progress}%` }} />
+                    {loadingContent ? (
+                        <div style={{ color: "var(--text-muted)", padding: "20px 0" }}>Loading subjects...</div>
+                    ) : (
+                        <div className={styles.subjectsGrid}>
+                            {subjects.map((subject) => {
+                                const subjectChapters = chaptersBySubject[subject.id] || subject.chapters || [];
+                                return (
+                                    <div key={subject.id} className={styles.subjectCard} onClick={() => openSubjectPopup({ ...subject, chapters: subjectChapters })}>
+                                        <div className={styles.subjectArt}>
+                                            <svg viewBox="0 0 200 120" fill="none">
+                                                <ellipse cx="140" cy="20" rx="80" ry="30" transform="rotate(-20 140 20)" fill="var(--svg-fill-accent)" opacity="0.5" />
+                                                <ellipse cx="60" cy="90" rx="60" ry="25" transform="rotate(15 60 90)" fill="var(--svg-fill-dark)" opacity="0.3" />
+                                            </svg>
+                                        </div>
+                                        <div className={styles.subjectIcon}>{subject.icon || SUBJECT_ICONS[subject.name] || "📖"}</div>
+                                        <div className={styles.subjectName}>{subject.name}</div>
+                                        <div className={styles.subjectMeta}>
+                                            {subject.grade ? `Class ${subject.grade} · ` : ""}
+                                            {subjectChapters.length} chapters
+                                        </div>
+                                        <div className={styles.subjectProgress}>
+                                            <div className={styles.progressTrack}>
+                                                <div className={styles.progressFill} style={{ width: `${subject.progress || 0}%` }} />
+                                            </div>
+                                            <span className={styles.progressLabel}>{subject.progress || 0}%</span>
+                                        </div>
+                                        <div className={styles.subjectArrow}>→</div>
                                     </div>
-                                    <span className={styles.progressLabel}>{subject.progress}%</span>
-                                </div>
-                                <div className={styles.subjectArrow}>→</div>
+                                );
+                            })}
+                            <div className={`${styles.subjectCard} ${styles.comingSoon}`}>
+                                <div className={styles.subjectIcon}>🔬</div>
+                                <div className={styles.subjectName}>Science</div>
+                                <div className={styles.subjectMeta}>Coming Soon</div>
                             </div>
-                        ))}
-                        <div className={`${styles.subjectCard} ${styles.comingSoon}`}>
-                            <div className={styles.subjectIcon}>🔬</div>
-                            <div className={styles.subjectName}>Science</div>
-                            <div className={styles.subjectMeta}>Coming Soon</div>
                         </div>
-                    </div>
+                    )}
 
                     {/* Subject Chapters Popup */}
                     {subjectPopup && (
@@ -427,6 +511,14 @@ export default function StudentDashboard() {
                     {/* Popups */}
                     <SearchOverlay isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
                     <ProfilePopup isOpen={profileOpen} onClose={() => setProfileOpen(false)} />
+
+                    {/* Onboarding */}
+                    {showOnboarding && (
+                        <OnboardingModal
+                            user={userProfile || user}
+                            onComplete={() => setShowOnboarding(false)}
+                        />
+                    )}
                 </div>
             </AppLayout>
         </ProtectedRoute>

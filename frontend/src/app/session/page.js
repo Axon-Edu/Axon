@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import styles from "./session.module.css";
 import AppLayout from "@/components/layout/AppLayout";
+import SessionSummarizer from "@/components/ui/SessionSummarizer";
 
 // Session phases
 const PHASES = {
@@ -249,181 +250,167 @@ export default function SessionPage() {
     return (
         <ProtectedRoute allowedRoles={["student"]}>
             <AppLayout>
-                <div className={styles.container}>
-                    {/* Session Header */}
-                    <div className={styles.sessionHeader}>
-                        <div className={styles.headerLeft}>
-                            <button className={styles.backBtn} onClick={() => router.push("/student")}>
-                                ←
-                            </button>
-                            <div>
-                                <div className={styles.sessionSubject}>Mathematics</div>
-                                <div className={styles.sessionTopic}>Real Numbers</div>
+                {/* Full-screen Session Summarizer if session is complete */}
+                {sessionComplete ? (
+                    <SessionSummarizer studentName={userProfile?.full_name} />
+                ) : (
+                    <div className={styles.container}>
+                        {/* Session Header */}
+                        <div className={styles.sessionHeader}>
+                            <div className={styles.headerLeft}>
+                                <button className={styles.backBtn} onClick={() => router.push("/student")}>
+                                    ←
+                                </button>
+                                <div>
+                                    <div className={styles.sessionSubject}>Mathematics</div>
+                                    <div className={styles.sessionTopic}>Real Numbers</div>
+                                </div>
+                            </div>
+                            <div className={styles.headerRight}>
+                                <div className={styles.phaseIndicator}>
+                                    <span
+                                        className={styles.phaseDot}
+                                        style={{ background: PHASE_COLORS[currentPhase] }}
+                                    />
+                                    <span className={styles.phaseText}>{currentPhase}</span>
+                                </div>
+                                <button className={styles.endBtn} onClick={() => setSessionComplete(true)}>
+                                    End Session
+                                </button>
                             </div>
                         </div>
-                        <div className={styles.phaseIndicator}>
-                            <span
-                                className={styles.phaseDot}
-                                style={{ background: PHASE_COLORS[currentPhase] }}
-                            />
-                            <span className={styles.phaseText}>{currentPhase}</span>
-                        </div>
-                    </div>
 
-                    {/* Phase Progress Bar */}
-                    <div className={styles.phaseBar}>
-                        {Object.values(PHASES).slice(0, 3).map((phase) => (
-                            <div
-                                key={phase}
-                                className={`${styles.phaseSegment} ${currentPhase === phase ? styles.phaseActive : ""} ${Object.values(PHASES).indexOf(currentPhase) > Object.values(PHASES).indexOf(phase)
+                        {/* Phase Progress Bar */}
+                        <div className={styles.phaseBar}>
+                            {Object.values(PHASES).slice(0, 3).map((phase) => (
+                                <div
+                                    key={phase}
+                                    className={`${styles.phaseSegment} ${currentPhase === phase ? styles.phaseActive : ""} ${Object.values(PHASES).indexOf(currentPhase) > Object.values(PHASES).indexOf(phase)
                                         ? styles.phaseComplete
                                         : ""
-                                    }`}
-                            >
-                                <div className={styles.phaseSegLabel}>{phase}</div>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Mastery Bar (if questions answered) */}
-                    {totalQuestions > 0 && (
-                        <div className={styles.masteryBar}>
-                            <span className={styles.masteryLabel}>Mastery</span>
-                            <div className={styles.masteryTrack}>
-                                <div
-                                    className={styles.masteryFill}
-                                    style={{
-                                        width: `${masteryPercent}%`,
-                                        background: masteryPercent >= 70
-                                            ? "var(--accent-green)"
-                                            : masteryPercent >= 40
-                                                ? "var(--accent-amber)"
-                                                : "var(--accent-pink)",
-                                    }}
-                                />
-                            </div>
-                            <span className={styles.masteryValue}>{masteryPercent}%</span>
-                        </div>
-                    )}
-
-                    {/* Chat Area */}
-                    <div className={styles.chatArea} ref={chatAreaRef}>
-                        <div className={styles.messageList}>
-                            {messages.map((msg) => (
-                                <div
-                                    key={msg.id}
-                                    className={`${styles.msgWrapper} ${msg.type === "user" ? styles.msgUser : styles.msgAi} ${msg.isFeedback ? (msg.isCorrect ? styles.msgCorrect : styles.msgIncorrect) : ""
                                         }`}
                                 >
-                                    {msg.type === "ai" && (
-                                        <div className={styles.aiAvatar}>🤖</div>
-                                    )}
-                                    <div className={`${styles.msgBubble} ${msg.type === "user" ? styles.bubbleUser : styles.bubbleAi}`}>
-                                        {renderText(msg.text)}
-                                    </div>
+                                    <div className={styles.phaseSegLabel}>{phase}</div>
                                 </div>
                             ))}
+                        </div>
 
-                            {/* Typing indicator */}
-                            {isTyping && (
-                                <div className={`${styles.msgWrapper} ${styles.msgAi}`}>
-                                    <div className={styles.aiAvatar}>🤖</div>
-                                    <div className={`${styles.msgBubble} ${styles.bubbleAi} ${styles.typing}`}>
-                                        <span className={styles.typingDot} />
-                                        <span className={styles.typingDot} />
-                                        <span className={styles.typingDot} />
-                                    </div>
+                        {/* Mastery Bar (if questions answered) */}
+                        {totalQuestions > 0 && (
+                            <div className={styles.masteryBar}>
+                                <span className={styles.masteryLabel}>Mastery</span>
+                                <div className={styles.masteryTrack}>
+                                    <div
+                                        className={styles.masteryFill}
+                                        style={{
+                                            width: `${masteryPercent}%`,
+                                            background: masteryPercent >= 70
+                                                ? "var(--accent-green)"
+                                                : masteryPercent >= 40
+                                                    ? "var(--accent-amber)"
+                                                    : "var(--accent-pink)",
+                                        }}
+                                    />
                                 </div>
-                            )}
+                                <span className={styles.masteryValue}>{masteryPercent}%</span>
+                            </div>
+                        )}
 
-                            {/* Assessment Options */}
-                            {currentPhase === PHASES.ASSESSMENT && currentStep && messageIndex > 0 && !showExplanation && (
-                                <div className={styles.optionsContainer}>
-                                    {currentStep.question.options.map((option, i) => (
-                                        <button
-                                            key={i}
-                                            className={`${styles.optionBtn} ${selectedOption === i
+                        {/* Chat Area */}
+                        <div className={styles.chatArea} ref={chatAreaRef}>
+                            <div className={styles.messageList}>
+                                {messages.map((msg) => (
+                                    <div
+                                        key={msg.id}
+                                        className={`${styles.msgWrapper} ${msg.type === "user" ? styles.msgUser : styles.msgAi} ${msg.isFeedback ? (msg.isCorrect ? styles.msgCorrect : styles.msgIncorrect) : ""
+                                            }`}
+                                    >
+                                        {msg.type === "ai" && (
+                                            <div className={styles.aiAvatar}>🤖</div>
+                                        )}
+                                        <div className={`${styles.msgBubble} ${msg.type === "user" ? styles.bubbleUser : styles.bubbleAi}`}>
+                                            {renderText(msg.text)}
+                                        </div>
+                                    </div>
+                                ))}
+
+                                {/* Typing indicator */}
+                                {isTyping && (
+                                    <div className={`${styles.msgWrapper} ${styles.msgAi}`}>
+                                        <div className={styles.aiAvatar}>🤖</div>
+                                        <div className={`${styles.msgBubble} ${styles.bubbleAi} ${styles.typing}`}>
+                                            <span className={styles.typingDot} />
+                                            <span className={styles.typingDot} />
+                                            <span className={styles.typingDot} />
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Assessment Options */}
+                                {currentPhase === PHASES.ASSESSMENT && currentStep && messageIndex > 0 && !showExplanation && (
+                                    <div className={styles.optionsContainer}>
+                                        {currentStep.question.options.map((option, i) => (
+                                            <button
+                                                key={i}
+                                                className={`${styles.optionBtn} ${selectedOption === i
                                                     ? i === currentStep.question.correct
                                                         ? styles.optionCorrect
                                                         : styles.optionIncorrect
                                                     : selectedOption !== null && i === currentStep.question.correct
                                                         ? styles.optionCorrect
                                                         : ""
-                                                }`}
-                                            onClick={() => handleOptionSelect(i)}
-                                            disabled={selectedOption !== null}
-                                        >
-                                            <span className={styles.optionLetter}>
-                                                {String.fromCharCode(65 + i)}
-                                            </span>
-                                            {option}
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
-
-                            {/* Continue Button after feedback */}
-                            {showExplanation && !sessionComplete && (
-                                <div className={styles.continueWrapper}>
-                                    <button className={styles.continueBtn} onClick={handleContinue}>
-                                        Continue →
-                                    </button>
-                                </div>
-                            )}
-
-                            {/* Session Complete */}
-                            {sessionComplete && (
-                                <div className={styles.completeCard}>
-                                    <div className={styles.completeBadge}>🎉</div>
-                                    <div className={styles.completeTitle}>Session Complete!</div>
-                                    <div className={styles.completeStats}>
-                                        <div className={styles.completeStat}>
-                                            <div className={styles.completeStatValue}>{correctCount}/{totalQuestions}</div>
-                                            <div className={styles.completeStatLabel}>Correct</div>
-                                        </div>
-                                        <div className={styles.completeStat}>
-                                            <div className={styles.completeStatValue}>{masteryPercent}%</div>
-                                            <div className={styles.completeStatLabel}>Mastery</div>
-                                        </div>
+                                                    }`}
+                                                onClick={() => handleOptionSelect(i)}
+                                                disabled={selectedOption !== null}
+                                            >
+                                                <span className={styles.optionLetter}>
+                                                    {String.fromCharCode(65 + i)}
+                                                </span>
+                                                {option}
+                                            </button>
+                                        ))}
                                     </div>
-                                    <button
-                                        className={styles.completeBtn}
-                                        onClick={() => router.push("/student")}
-                                    >
-                                        Back to Dashboard
-                                    </button>
-                                </div>
-                            )}
+                                )}
 
-                            <div ref={messagesEndRef} />
+                                {/* Continue Button after feedback */}
+                                {showExplanation && !sessionComplete && (
+                                    <div className={styles.continueWrapper}>
+                                        <button className={styles.continueBtn} onClick={handleContinue}>
+                                            Continue →
+                                        </button>
+                                    </div>
+                                )}
+
+                                <div ref={messagesEndRef} />
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Input Area */}
-                    {!sessionComplete && (
-                        <form onSubmit={handleSendMessage} className={styles.inputArea}>
-                            <input
-                                type="text"
-                                className={styles.input}
-                                placeholder={
-                                    currentPhase === PHASES.ASSESSMENT
-                                        ? "Select an option above..."
-                                        : "Ask a question..."
-                                }
-                                value={input}
-                                onChange={(e) => setInput(e.target.value)}
-                                disabled={currentPhase === PHASES.ASSESSMENT && !showExplanation}
-                            />
-                            <button
-                                type="submit"
-                                className={styles.sendBtn}
-                                disabled={!input.trim() || (currentPhase === PHASES.ASSESSMENT && !showExplanation)}
-                            >
-                                →
-                            </button>
-                        </form>
-                    )}
-                </div>
+                        {/* Input Area */}
+                        {!sessionComplete && (
+                            <form onSubmit={handleSendMessage} className={styles.inputArea}>
+                                <input
+                                    type="text"
+                                    className={styles.input}
+                                    placeholder={
+                                        currentPhase === PHASES.ASSESSMENT
+                                            ? "Select an option above..."
+                                            : "Ask a question..."
+                                    }
+                                    value={input}
+                                    onChange={(e) => setInput(e.target.value)}
+                                    disabled={currentPhase === PHASES.ASSESSMENT && !showExplanation}
+                                />
+                                <button
+                                    type="submit"
+                                    className={styles.sendBtn}
+                                    disabled={!input.trim() || (currentPhase === PHASES.ASSESSMENT && !showExplanation)}
+                                >
+                                    →
+                                </button>
+                            </form>
+                        )}
+                    </div>
+                )}
             </AppLayout>
         </ProtectedRoute>
     );

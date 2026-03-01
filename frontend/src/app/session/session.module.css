@@ -22,6 +22,12 @@
     gap: 12px;
 }
 
+.headerRight {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
 .backBtn {
     width: 36px;
     height: 36px;
@@ -91,6 +97,26 @@
     font-size: 12px;
     font-weight: 600;
     color: var(--text-primary);
+}
+
+.endBtn {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ff6b6b;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: var(--font-body);
+}
+
+.endBtn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #ff8787;
+    transform: translateY(-1px);
 }
 
 /* PHASE BAR */
