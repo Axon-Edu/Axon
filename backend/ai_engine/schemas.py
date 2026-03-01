@@ -47,6 +47,7 @@ class TeachingState(str, Enum):
     RETEACH_WITH_ANALOGY = "reteach_with_analogy"
     DOUBT_RESPONSE = "doubt_response"
     NODE_COMPLETE = "node_complete"
+    CHAPTER_EVALUATION = "chapter_evaluation"  # end-of-chapter assessment
     CHAPTER_COMPLETE = "chapter_complete"
 
 

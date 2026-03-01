@@ -98,6 +98,14 @@ def _get_state_instructions(
             f"Then smoothly transition to the next topic: '{next_topic}'.\n"
             f"Give a brief preview of what's coming next to build curiosity."
         ),
+        TeachingState.CHAPTER_EVALUATION: (
+            f"The student has finished all teaching nodes! Now run a chapter evaluation.\n"
+            f"Ask them questions from the question bank (application-based, critical thinking).\n"
+            f"Include CBSE PYQ-style questions if relevant.\n"
+            f"Ask practical questions about where these concepts are used in real life.\n"
+            f"Connect to their interest in {interest_str} where possible.\n"
+            f"Ask ONE question at a time, evaluate their answer, then ask the next."
+        ),
         TeachingState.CHAPTER_COMPLETE: (
             f"The student completed all topics in this chapter! 🏆\n"
             f"Summarize the key concepts they learned.\n"
