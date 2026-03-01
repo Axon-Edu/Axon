@@ -23,8 +23,11 @@ export function AuthProvider({ children }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!auth) {
-            setTimeout(() => setLoading(false), 0);
+        if (!auth || isMockKey) {
+            // Mock user for UI presentation when Firebase keys are invalid or missing (like on Vercel)
+            setUser({ uid: "mock-user-123", email: "mock@example.com" });
+            setUserProfile({ full_name: "Mock Student", role: "student" });
+            setLoading(false);
             return;
         }
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {

@@ -27,13 +27,18 @@ const firebaseConfig = {
 let app = null;
 let auth = null;
 
-if (typeof window !== "undefined") {
-    app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
-    auth = getAuth(app);
+const isMockKey = firebaseConfig.apiKey === "mock_key" || !firebaseConfig.apiKey;
+
+if (typeof window !== "undefined" && !isMockKey) {
+    try {
+        app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
+        auth = getAuth(app);
+    } catch (e) {
+        console.warn("Firebase initialization skipped", e);
+    }
 }
 
 const googleProvider = new GoogleAuthProvider();
-const isMockKey = firebaseConfig.apiKey === "mock_key";
 
 export {
     app,
