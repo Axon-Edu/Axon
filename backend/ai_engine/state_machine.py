@@ -14,7 +14,9 @@ import random
 from datetime import datetime
 from typing import Optional
 
-from anthropic import AsyncAnthropic
+from google import genai
+from google.genai import types
+import httpx
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -35,46 +37,55 @@ from ai_engine.context_assembler import (
 
 
 # ──────────────────────────────────────────────
-# Async Claude client
+# Gemini Client Setup (google.genai SDK)
 # ──────────────────────────────────────────────
 
-_client: AsyncAnthropic | None = None
+_client: genai.Client | None = None
 
 
-def _get_client() -> AsyncAnthropic:
+def _get_client() -> genai.Client:
     global _client
     if _client is None:
-        _client = AsyncAnthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+        _client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
     return _client
 
 
-async def _call_sonnet(system: str, messages: list[dict]) -> str:
-    """Call Claude Sonnet (main tutor model)."""
-    model = os.environ.get("ANTHROPIC_TUTOR_MODEL", "claude-sonnet-4-6")
-    resp = await _get_client().messages.create(
+async def _call_gemini_pro(system: str, messages: list[dict]) -> str:
+    """Call Gemini Pro (main tutor model) with conversation history."""
+    model = os.environ.get("GEMINI_PRO_MODEL", "gemini-2.0-flash")
+    contents = []
+    for msg in messages:
+        role = "user" if msg["role"] == "user" else "model"
+        contents.append(types.Content(role=role, parts=[types.Part.from_text(text=msg["content"])]))
+
+    response = _get_client().models.generate_content(
         model=model,
-        max_tokens=1024,
-        system=system,
-        messages=messages,
+        contents=contents,
+        config=types.GenerateContentConfig(
+            system_instruction=system,
+            max_output_tokens=1024,
+        ),
     )
-    return resp.content[0].text
+    return response.text
 
 
-async def _call_haiku(system: str, user_msg: str) -> str:
-    """Call Claude Haiku (helper model)."""
-    model = os.environ.get("ANTHROPIC_HELPER_MODEL", "claude-haiku-4-5-20251001")
-    resp = await _get_client().messages.create(
+async def _call_gemini_flash(system: str, user_msg: str) -> str:
+    """Call Gemini Flash (helper model) — single user message."""
+    model = os.environ.get("GEMINI_FLASH_MODEL", "gemini-2.0-flash-lite")
+    response = _get_client().models.generate_content(
         model=model,
-        max_tokens=1024,
-        system=system,
-        messages=[{"role": "user", "content": user_msg}],
+        contents=user_msg,
+        config=types.GenerateContentConfig(
+            system_instruction=system,
+            max_output_tokens=1024,
+        ),
     )
-    return resp.content[0].text
+    return response.text
 
 
-async def _call_haiku_json(system: str, user_msg: str) -> dict:
-    """Call Haiku and parse JSON response."""
-    raw = await _call_haiku(system, user_msg)
+async def _call_flash_json(system: str, user_msg: str) -> dict:
+    """Call Gemini Flash and parse JSON response."""
+    raw = await _call_gemini_flash(system, user_msg)
     raw = raw.strip()
     if raw.startswith("```"):
         raw = raw.split("\n", 1)[1]
@@ -84,26 +95,32 @@ async def _call_haiku_json(system: str, user_msg: str) -> dict:
 
 
 # ──────────────────────────────────────────────
-# Tavily web search (for remediation)
+# Serper web search (for remediation)
 # ──────────────────────────────────────────────
 
 async def _web_search(topic: str) -> str:
-    """Search for remediation content using Tavily."""
+    """Search for remediation content using Serper.dev."""
     try:
-        from tavily import TavilyClient
-        client = TavilyClient(api_key=os.environ.get("TAVILY_API_KEY", ""))
-        result = client.search(
-            query=f"CBSE class 10 {topic} simple explanation",
-            search_depth="basic",
-            max_results=2,
-            include_domains=["ncert.nic.in", "byjus.com", "toppr.com"],
-        )
-        contents = []
-        for r in result.get("results", []):
-            contents.append(r.get("content", ""))
-        return "\n\n".join(contents)[:2000]  # cap at 2000 chars
+        api_key = os.environ.get("SERPER_API_KEY", "")
+        if not api_key:
+            return ""
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(
+                "https://google.serper.dev/search",
+                headers={"X-API-KEY": api_key, "Content-Type": "application/json"},
+                json={
+                    "q": f"CBSE class 10 {topic} simple explanation site:ncert.nic.in OR site:byjus.com",
+                    "num": 3,
+                },
+                timeout=10.0,
+            )
+            data = resp.json()
+            snippets = []
+            for result in data.get("organic", [])[:3]:
+                snippets.append(result.get("snippet", ""))
+            return "\n\n".join(snippets)[:2000]
     except Exception as e:
-        print(f"  ⚠️  Tavily search failed: {e}")
+        print(f"  ⚠️  Serper search failed: {e}")
         return ""
 
 
@@ -289,7 +306,7 @@ class TutorStateMachine:
     async def _check_for_doubt(self, message: str) -> bool:
         """Detect if the student is asking a doubt."""
         sys_prompt, user_msg = assemble_doubt_detector_context(message)
-        result = await _call_haiku(sys_prompt, user_msg)
+        result = await _call_gemini_flash(sys_prompt, user_msg)
         return result.strip().lower() == "doubt"
 
     # ── Evaluator ────────────────────────────
@@ -299,7 +316,7 @@ class TutorStateMachine:
         node = self._current_node()
         expected = node.expected_understanding_signals if node else []
         sys_prompt, user_msg = assemble_evaluator_context(question, expected, student_response)
-        data = await _call_haiku_json(sys_prompt, user_msg)
+        data = await _call_flash_json(sys_prompt, user_msg)
         return EvaluatorOutput(**data)
 
     # ── Analogy Generator ────────────────────
@@ -309,7 +326,7 @@ class TutorStateMachine:
         interests = self.student_profile.get("interests", [])
         age = self.student_profile.get("grade", 10) + 5
         sys_prompt, user_msg = assemble_analogy_context(concept, interests, age)
-        return await _call_haiku(sys_prompt, user_msg)
+        return await _call_gemini_flash(sys_prompt, user_msg)
 
     # ── Tutor Call ───────────────────────────
 
@@ -328,7 +345,7 @@ class TutorStateMachine:
             **extra_context,
         )
 
-        return await _call_sonnet(system_prompt, self.messages)
+        return await _call_gemini_pro(system_prompt, self.messages)
 
     # ── Node Completion Log ──────────────────
 
@@ -709,7 +726,7 @@ class TutorStateMachine:
             relevant_content=relevant_content + qbank_text,
         )
 
-        response = await _call_sonnet(system_prompt, self.messages)
+        response = await _call_gemini_pro(system_prompt, self.messages)
 
         # After a few evaluation turns, transition to complete
         # Count how many evaluation turns we've done

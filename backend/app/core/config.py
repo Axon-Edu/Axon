@@ -26,21 +26,17 @@ class Settings(BaseSettings):
     # Firebase
     FIREBASE_CREDENTIALS_PATH: str = "ServiceAccountKey.json"
 
-    # Google Gemini (free tier)
+    # Google Gemini (existing free-tier + AI Engine via GCP $300 credits)
     GEMINI_API_KEY: str = ""
-    GEMINI_MODEL: str = "gemini-2.0-flash"
+    GEMINI_PRO_MODEL: str = "gemini-2.0-flash"  # primary tutor (Sonnet-equivalent)
+    GEMINI_FLASH_MODEL: str = "gemini-2.0-flash-lite"  # evaluator, analogy, companion (Haiku-equivalent)
 
     # Groq (LLM inference)
     GROQ_API_KEY: str = ""
     GROQ_MODEL: str = "llama-3.3-70b-versatile"
 
-    # Anthropic Claude (AI Engine)
-    ANTHROPIC_API_KEY: str = ""
-    ANTHROPIC_TUTOR_MODEL: str = "claude-sonnet-4-6"  # main tutor
-    ANTHROPIC_HELPER_MODEL: str = "claude-haiku-4-5-20251001"  # evaluator, analogy, companion
-
-    # Tavily (web search for remediation)
-    TAVILY_API_KEY: str = ""
+    # Serper (web search for remediation)
+    SERPER_API_KEY: str = ""
 
     # File Storage
     UPLOAD_DIR: str = "uploads"

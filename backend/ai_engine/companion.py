@@ -13,7 +13,8 @@ import os
 from datetime import datetime
 from typing import Optional
 
-from anthropic import AsyncAnthropic
+from google import genai
+from google.genai import types
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -29,34 +30,50 @@ from ai_engine.context_assembler import (
 
 
 # ──────────────────────────────────────────────
-# Async Claude client (shared with state_machine)
+# Gemini Flash client (google.genai SDK)
 # ──────────────────────────────────────────────
 
-_client: AsyncAnthropic | None = None
+_client: genai.Client | None = None
 
 
-def _get_client() -> AsyncAnthropic:
+def _get_client() -> genai.Client:
     global _client
     if _client is None:
-        _client = AsyncAnthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+        _client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
     return _client
 
 
-async def _call_haiku(system: str, messages: list[dict]) -> str:
-    """Call Haiku with full messages array."""
-    model = os.environ.get("ANTHROPIC_HELPER_MODEL", "claude-haiku-4-5-20251001")
-    resp = await _get_client().messages.create(
+async def _call_flash(system: str, messages: list[dict]) -> str:
+    """Call Gemini Flash with full messages array."""
+    model = os.environ.get("GEMINI_FLASH_MODEL", "gemini-2.0-flash-lite")
+    contents = []
+    for msg in messages:
+        role = "user" if msg["role"] == "user" else "model"
+        contents.append(types.Content(role=role, parts=[types.Part.from_text(text=msg["content"])]))
+
+    response = _get_client().models.generate_content(
         model=model,
-        max_tokens=1024,
-        system=system,
-        messages=messages,
+        contents=contents,
+        config=types.GenerateContentConfig(
+            system_instruction=system,
+            max_output_tokens=1024,
+        ),
     )
-    return resp.content[0].text
+    return response.text
 
 
-async def _call_haiku_oneshot(system: str, user_msg: str) -> str:
-    """Call Haiku with a single user message."""
-    return await _call_haiku(system, [{"role": "user", "content": user_msg}])
+async def _call_flash_oneshot(system: str, user_msg: str) -> str:
+    """Call Gemini Flash with a single user message."""
+    model = os.environ.get("GEMINI_FLASH_MODEL", "gemini-2.0-flash-lite")
+    response = _get_client().models.generate_content(
+        model=model,
+        contents=user_msg,
+        config=types.GenerateContentConfig(
+            system_instruction=system,
+            max_output_tokens=1024,
+        ),
+    )
+    return response.text
 
 
 # ──────────────────────────────────────────────
@@ -147,7 +164,7 @@ class CompanionHandler:
         )
 
         # Call Haiku with full conversation
-        response = await _call_haiku(system_prompt, self.messages)
+        response = await _call_flash(system_prompt, self.messages)
 
         # Save assistant response
         msg = SessionMessage(
@@ -171,7 +188,7 @@ class CompanionHandler:
 
         # Companion starts with a greeting
         greeting_hint = "Start the conversation with a warm, friendly greeting."
-        response = await _call_haiku(
+        response = await _call_flash(
             system_prompt,
             [{"role": "user", "content": greeting_hint}],
         )
@@ -192,7 +209,7 @@ class CompanionHandler:
         """End companion session, extract context, and update student profile."""
         # Extract context from conversation
         sys_prompt, user_msg = assemble_context_extractor_context(self.messages)
-        raw = await _call_haiku_oneshot(sys_prompt, user_msg)
+        raw = await _call_flash_oneshot(sys_prompt, user_msg)
 
         # Parse JSON
         raw = raw.strip()

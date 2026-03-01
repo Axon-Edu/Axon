@@ -29,7 +29,8 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 # Add backend to path for app imports
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from anthropic import Anthropic
+from google import genai
+from google.genai import types
 from supabase import create_client, Client as SupabaseClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
@@ -42,16 +43,16 @@ from ai_engine.schemas import RoadmapJSON, QuestionBankItem
 # Clients (lazy init)
 # ──────────────────────────────────────────────
 
-_anthropic: Anthropic | None = None
+_gemini_client: genai.Client | None = None
 _supabase: SupabaseClient | None = None
 _db_engine = None
 
 
-def get_anthropic() -> Anthropic:
-    global _anthropic
-    if _anthropic is None:
-        _anthropic = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
-    return _anthropic
+def _get_gemini() -> genai.Client:
+    global _gemini_client
+    if _gemini_client is None:
+        _gemini_client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    return _gemini_client
 
 
 def get_supabase() -> SupabaseClient:
@@ -71,16 +72,18 @@ def get_db_session() -> Session:
     return Session(_db_engine)
 
 
-def call_haiku(system_prompt: str, user_prompt: str) -> str:
-    """Call Claude Haiku and return the text response."""
-    model = os.environ.get("ANTHROPIC_HELPER_MODEL", "claude-haiku-4-5-20251001")
-    resp = get_anthropic().messages.create(
+def call_flash(system_prompt: str, user_prompt: str) -> str:
+    """Call Gemini Flash (sync) and return the text response."""
+    model = os.environ.get("GEMINI_FLASH_MODEL", "gemini-2.0-flash-lite")
+    response = _get_gemini().models.generate_content(
         model=model,
-        max_tokens=4096,
-        system=system_prompt,
-        messages=[{"role": "user", "content": user_prompt}],
+        contents=user_prompt,
+        config=types.GenerateContentConfig(
+            system_instruction=system_prompt,
+            max_output_tokens=4096,
+        ),
     )
-    return resp.content[0].text
+    return response.text
 
 
 # ──────────────────────────────────────────────
@@ -133,7 +136,7 @@ def parse_roadmap_pdf(pdf_path: str) -> RoadmapJSON:
         raise ValueError(f"No text extracted from {pdf_path}")
 
     print(f"  🤖 Sending {len(full_text)} chars to Haiku for parsing...")
-    raw_json = call_haiku(ROADMAP_SYSTEM_PROMPT, full_text)
+    raw_json = call_flash(ROADMAP_SYSTEM_PROMPT, full_text)
 
     # Clean up potential markdown fences
     raw_json = raw_json.strip()
@@ -149,7 +152,7 @@ def parse_roadmap_pdf(pdf_path: str) -> RoadmapJSON:
         roadmap = RoadmapJSON(**data)
     except (json.JSONDecodeError, Exception) as e:
         print(f"  ⚠️  First parse failed ({e}), retrying...")
-        raw_json = call_haiku(
+        raw_json = call_flash(
             ROADMAP_SYSTEM_PROMPT + "\n\nIMPORTANT: Your previous response was not valid JSON. Please output ONLY pure JSON.",
             full_text,
         )
@@ -445,7 +448,7 @@ def load_question_bank(file_path: str) -> list[dict]:
             raise ValueError(f"No text extracted from {file_path}")
 
         print(f"  🤖 Sending {len(full_text)} chars to Haiku for parsing...")
-        raw_json = call_haiku(QUESTION_BANK_SYSTEM_PROMPT, full_text)
+        raw_json = call_flash(QUESTION_BANK_SYSTEM_PROMPT, full_text)
 
         # Clean up
         raw_json = raw_json.strip()
@@ -459,7 +462,7 @@ def load_question_bank(file_path: str) -> list[dict]:
             raw_data = json.loads(raw_json)
         except json.JSONDecodeError as e:
             print(f"  ⚠️  First parse failed ({e}), retrying...")
-            raw_json = call_haiku(
+            raw_json = call_flash(
                 QUESTION_BANK_SYSTEM_PROMPT + "\n\nIMPORTANT: Output ONLY pure JSON array.",
                 full_text,
             )
