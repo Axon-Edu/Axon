@@ -10,17 +10,17 @@ export default function BottomNav() {
     const navItems = [
         { name: "Home", icon: "🏠", path: "/student" },
         { name: "Learn", icon: "📖", path: "/session" },
-        { name: "Chat", icon: "💬", path: "/chat" },
-        { name: "Profile", icon: "👤", path: "/profile" },
+        { name: "Progress", icon: "📈", path: "/progress" },
+        { name: "Profile", icon: "👤", path: "/student", isProfile: true },
     ];
 
     return (
         <nav className={styles.bottomNav}>
             {navItems.map((item) => (
                 <Link
-                    key={item.path}
+                    key={item.name}
                     href={item.path}
-                    className={`${styles.bottomNavItem} ${pathname === item.path ? styles.active : ""}`}
+                    className={`${styles.bottomNavItem} ${pathname === item.path && !item.isProfile ? styles.active : ""}`}
                 >
                     <span className={styles.bottomNavIcon}>{item.icon}</span>
                     <span className={styles.bottomNavText}>{item.name}</span>

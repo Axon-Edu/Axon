@@ -1,280 +1,987 @@
 .container {
     height: 100%;
-    background: var(--black);
+    background: var(--bg-primary);
     padding: 20px;
     overflow-y: auto;
     overflow-x: hidden;
 }
 
+/* HEADER */
 .userHeader {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     margin-bottom: 24px;
 }
 
 .avatar {
-    width: 42px;
-    height: 42px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #d4a574, #c8956c);
+    background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    font-size: 20px;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+}
+
+.avatar:hover {
+    transform: scale(1.05);
+}
+
+.headerText {
+    flex: 1;
+}
+
+.greeting {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
 }
 
 .userName {
-    color: var(--white);
-    font-size: 15px;
-    font-weight: 600;
+    font-family: var(--font-heading);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
 }
 
 .headerIcons {
-    margin-left: auto;
     display: flex;
     gap: 8px;
 }
 
 .iconBtn {
-    width: 38px;
-    height: 38px;
-    background: var(--gray);
+    width: 40px;
+    height: 40px;
+    background: var(--bg-tertiary);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--text-secondary);
-    font-size: 15px;
+    font-size: 16px;
     cursor: pointer;
-    position: relative;
+    transition: all 0.2s;
 }
 
-.notifDot {
-    width: 8px;
-    height: 8px;
-    background: #ff4d4d;
-    border-radius: 50%;
+.iconBtn:hover {
+    background: var(--overlay-bg);
+    transform: scale(1.05);
+}
+
+/* STATS ROW */
+.statsRow {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.statCard {
+    background: var(--bg-secondary);
+    border-radius: 18px;
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--border-color);
+    transition: transform 0.2s;
+}
+
+.statCard:hover {
+    transform: translateY(-2px);
+}
+
+.statIcon {
+    font-size: 24px;
+}
+
+.statInfo {
+    text-align: center;
+}
+
+.statValue {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.statLabel {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.masteryRing {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* RESUME SESSION CARD */
+.resumeCard {
+    background: var(--accent-purple);
+    border-radius: 22px;
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    margin-bottom: 24px;
+    transition: transform 0.2s;
+}
+
+.resumeCard:hover {
+    transform: scale(0.98);
+}
+
+.resumeArt {
     position: absolute;
-    top: 6px;
-    right: 6px;
+    inset: 0;
+    pointer-events: none;
+}
+
+.resumeArt svg {
+    width: 100%;
+    height: 100%;
+}
+
+.resumeBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(4px);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 1;
+}
+
+.liveIndicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #34d399;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.4;
+    }
+}
+
+.resumeContent {
+    position: relative;
+    z-index: 1;
+}
+
+.resumeSubject {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.6);
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.resumeTopic {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 6px;
+}
+
+.resumeMeta {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.5);
+    margin-bottom: 16px;
+}
+
+.resumeBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 10px 22px;
+    border-radius: 22px;
+    font-size: 14px;
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+    transition: background 0.2s;
+}
+
+.resumeBtn:hover {
+    background: rgba(0, 0, 0, 1);
+}
+
+.resumeArrow {
+    font-size: 16px;
+    transition: transform 0.2s;
+}
+
+.resumeCard:hover .resumeArrow {
+    transform: translateX(3px);
+}
+
+/* SECTION HEADERS */
+.sectionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
 }
 
 .sectionTitle {
     font-family: var(--font-heading);
-    font-size: 26px;
+    font-size: 18px;
     font-weight: 700;
-    color: var(--white);
-    margin-bottom: 16px;
+    color: var(--text-primary);
 }
 
-.sectionTitle span {
-    color: var(--text-muted);
-    font-weight: 400;
-}
-
-.filterTabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 20px;
-    overflow-x: auto;
-    scrollbar-width: none;
-}
-
-.filterTabs::-webkit-scrollbar {
-    display: none;
-}
-
-.tab {
-    padding: 8px 18px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.2s;
-}
-
-.tabActive {
-    background: var(--white);
-    color: var(--black);
-}
-
-.tabInactive {
-    background: var(--gray);
-    color: var(--text-muted);
-}
-
-.coursesGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 12px;
-    margin-bottom: 24px;
-    width: 100%;
-}
-
-@media (min-width: 1025px) {
-    .coursesGrid {
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 24px;
-    }
-}
-
-
-
-
-/* Base course card is now in ui.module.css */
-/* We add specific dashboard positioning here if needed, but ui.module.css handles most */
-
-.rating {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    background: rgba(255, 255, 255, 0.85);
-    border-radius: 10px;
-    padding: 3px 8px;
-    font-size: 11px;
-    font-weight: 700;
-    color: #111;
-}
-
-.arrowBtn {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 28px;
-    height: 28px;
-    background: rgba(255, 255, 255, 0.85);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.sectionMeta {
     font-size: 12px;
-    color: #111;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* TODAY'S SCHEDULE */
+.scheduleList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.scheduleItem {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s;
     cursor: pointer;
 }
 
-.courseName {
+.scheduleItem:hover {
+    transform: translateX(4px);
+    border-color: var(--accent-purple);
+}
+
+.scheduleTime {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 56px;
+}
+
+.scheduleTimeText {
     font-family: var(--font-heading);
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
-    color: var(--black);
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+
+.scheduleDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.dotLive {
+    background: #ef4444;
+    animation: pulse 1.5s infinite;
+}
+
+.dotPractice {
+    background: var(--accent-green);
+}
+
+.scheduleInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.scheduleTitle {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
     margin-bottom: 2px;
-    position: relative;
-    z-index: 1;
 }
 
-.courseMeta {
-    font-size: 10px;
-    color: var(--text-secondary);
-    position: relative;
-    z-index: 1;
+.scheduleSub {
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* Event Specifics */
-.eventTimeBadge {
-    background: rgba(255, 255, 255, 0.85);
-    color: var(--black);
+.scheduleTag {
     font-size: 11px;
     font-weight: 600;
     padding: 4px 10px;
-    border-radius: 10px;
-    position: absolute;
-    top: 14px;
-    left: 14px;
+    border-radius: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
-.attendees {
+.tagLive {
+    background: rgba(239, 68, 68, 0.12);
+    color: #ef4444;
+}
+
+.tagPractice {
+    background: rgba(200, 245, 90, 0.12);
+    color: var(--accent-green);
+}
+
+/* SESSION SUMMARY */
+.sessionSummary {
+    background: var(--bg-secondary);
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 24px;
+    border: 1px solid var(--border-color);
+}
+
+.summaryRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.summaryRow:last-child {
+    margin-bottom: 0;
+}
+
+.summaryItem {
     display: flex;
     align-items: center;
-    position: absolute;
-    top: 10px;
-    right: 14px;
-    gap: -4px;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: var(--bg-tertiary);
 }
 
-.attendeeAvatar {
-    width: 26px;
-    height: 26px;
+.summaryIcon {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.summaryLabel {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.summaryValue {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* SUBJECTS GRID */
+.subjectsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+.subjectCard {
+    background: var(--accent-purple);
+    border-radius: 20px;
+    padding: 18px 16px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s;
+    display: flex;
+    flex-direction: column;
+    min-height: 180px;
+}
+
+.subjectCard:hover {
+    transform: scale(0.98);
+}
+
+.subjectArt {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.subjectArt svg {
+    width: 100%;
+    height: 100%;
+}
+
+.subjectIcon {
+    font-size: 32px;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+}
+
+.subjectName {
+    font-family: var(--font-heading);
+    font-size: 16px;
+    font-weight: 700;
+    color: #111;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 2px;
+}
+
+.subjectMeta {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 1;
+    margin-bottom: auto;
+}
+
+.subjectProgress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    z-index: 1;
+    margin-top: 14px;
+}
+
+.progressTrack {
+    flex: 1;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progressFill {
+    height: 100%;
+    background: #111;
+    border-radius: 4px;
+    transition: width 1s ease;
+}
+
+.progressLabel {
+    font-size: 11px;
+    font-weight: 700;
+    color: #111;
+}
+
+.subjectArrow {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 30px;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.7);
     border-radius: 50%;
-    border: 2px solid var(--purple);
-    background: linear-gradient(135deg, #d4a574, #8b9dc3);
-    margin-left: -6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #111;
+    z-index: 1;
+}
+
+.comingSoon {
+    background: var(--bg-secondary) !important;
+    border: 2px dashed var(--border-color);
+    opacity: 0.6;
+    cursor: default;
+}
+
+.comingSoon:hover {
+    transform: none;
+}
+
+.comingSoon .subjectName {
+    color: var(--text-primary);
+}
+
+.comingSoon .subjectMeta {
+    color: var(--text-muted);
+}
+
+/* ============= SUBJECT CHAPTERS POPUP ============= */
+.popupBackdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(6px);
+    z-index: 300;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.popupPanel {
+    width: 100%;
+    max-width: 520px;
+    max-height: 80vh;
+    background: var(--bg-primary);
+    border-radius: 24px 24px 0 0;
     overflow: hidden;
     display: flex;
+    flex-direction: column;
+    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+.popupHeader {
+    display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    color: #fff;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
 }
 
-.attendeeAvatar:first-child {
-    margin-left: 0;
+.popupHeaderLeft {
+    display: flex;
+    align-items: center;
+    gap: 14px;
 }
 
-.plusBadge {
-    width: 26px;
-    height: 26px;
+.popupIcon {
+    font-size: 32px;
+}
+
+.popupTitle {
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.popupSub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.popupClose {
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    background: var(--gray);
-    border: 2px solid var(--purple);
+    background: var(--bg-tertiary);
+    border: none;
+    color: var(--text-primary);
+    font-size: 16px;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 9px;
-    font-weight: 700;
-    color: #fff;
-    margin-left: -6px;
+    transition: all 0.2s;
+    z-index: 10;
 }
 
-.eventName {
-    font-family: var(--font-heading);
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--black);
-    position: relative;
-    z-index: 1;
+.popupClose:hover {
+    background: var(--overlay-bg);
+    transform: scale(1.05);
 }
 
-.eventMetaText {
-    font-size: 11px;
-    color: var(--text-secondary);
-    position: relative;
-    z-index: 1;
+/* CHAPTERS LIST */
+.chaptersList {
+    overflow-y: auto;
+    padding: 16px 20px 32px;
+    scrollbar-width: none;
 }
 
-.eventArrow {
-    position: absolute;
-    bottom: 14px;
-    right: 14px;
+.chaptersList::-webkit-scrollbar {
+    display: none;
+}
+
+.chapterItem {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+}
+
+.chapterItem:hover {
+    border-color: var(--accent-purple);
+}
+
+.chapterHead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.chapterHead:hover {
+    background: var(--bg-tertiary);
+}
+
+.chapterLeft {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+}
+
+.chapterStatus {
     width: 28px;
     height: 28px;
-    background: rgba(255, 255, 255, 0.85);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.chapterStarted {
+    background: var(--accent-green);
     color: #111;
 }
 
-/* Chapter List / Lessons Refinement */
-.chapterList {
-    margin-top: 10px;
+.chapterLocked {
+    background: var(--bg-tertiary);
+    color: var(--text-muted);
+}
+
+.chapterName {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+}
+
+.chapterProgressRow {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: 8px;
 }
 
-.chapterBtn {
+.chapterTrack {
+    width: 80px;
+    height: 4px;
+    border-radius: 4px;
+    background: var(--bg-tertiary);
+    overflow: hidden;
+}
+
+.chapterFill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+}
+
+.chapterPercent {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+.chapterChevron {
+    font-size: 20px;
+    color: var(--text-muted);
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+    transform: rotate(0deg);
+}
+
+.chevronOpen {
+    transform: rotate(90deg);
+}
+
+/* CHAPTER DETAIL (expanded) */
+.chapterDetail {
+    padding: 0 16px 16px;
+    animation: detailIn 0.25s ease;
+}
+
+@keyframes detailIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.chapterDesc {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+}
+
+.chapterStats {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.chapterStatItem {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: var(--bg-tertiary);
+    border-radius: 12px;
+}
+
+.chapterStatIcon {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.chapterStatValue {
+    font-family: var(--font-heading);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.chapterStatLabel {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.chapterSchedule {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: rgba(200, 245, 90, 0.08);
+    border: 1px solid rgba(200, 245, 90, 0.2);
+    border-radius: 12px;
+    margin-bottom: 14px;
+}
+
+.chapterScheduleIcon {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.chapterScheduleTitle {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.chapterScheduleSub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 1px;
+}
+
+.chapterStartBtn {
     width: 100%;
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    padding: 10px 14px !important;
-    font-size: 12px !important;
-    color: var(--text-secondary) !important;
+    padding: 12px;
+    border-radius: 14px;
+    background: var(--accent-purple);
+    color: #111;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: var(--font-heading);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+}
+
+.chapterStartBtn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 16px rgba(186, 146, 255, 0.3);
+}
+
+/* ============= COUNTDOWN POPUP ============= */
+.countdownPanel {
+    background: var(--bg-primary);
+    border-radius: 24px;
+    padding: 32px 24px;
+    width: 90%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.countdownIcon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    background: var(--bg-secondary);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-color);
+}
+
+.countdownTitle {
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+}
+
+.countdownSub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+}
+
+.countdownTimer {
+    font-family: var(--font-heading);
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+    padding: 16px 32px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 16px;
+    color: var(--accent-green);
+    text-shadow: 0 0 20px rgba(200, 245, 90, 0.2);
+}
+
+.countdownText {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 32px;
+}
+
+.countdownBtn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 16px;
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    font-size: 15px;
+    font-weight: 700;
+    font-family: var(--font-heading);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.countdownBtn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 16px rgba(255, 255, 255, 0.1);
+}
+
+/* DESKTOP */
+@media (min-width: 1025px) {
+    .statsRow {
+        gap: 16px;
+    }
+
+    .statCard {
+        padding: 24px 16px;
+    }
+
+    .resumeCard {
+        padding: 30px;
+    }
+
+    .resumeTopic {
+        font-size: 28px;
+    }
+
+    .subjectsGrid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 16px;
+    }
+
+    .sessionSummary {
+        max-width: 600px;
+    }
+
+    .popupPanel {
+        border-radius: 24px;
+        max-height: 70vh;
+    }
+
+    .popupBackdrop {
+        align-items: center;
+    }
+
+    .scheduleList {
+        max-width: 700px;
+    }
 }

@@ -8,6 +8,7 @@
     background: var(--bg-body);
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 .main-content {
@@ -20,54 +21,106 @@
     transition: all 0.3s ease;
 }
 
-/* DESKTOP LAYOUT (>= 1024px) */
+/* HAMBURGER BUTTON */
+.hamburger-btn {
+    position: fixed;
+    top: 24px;
+    left: 24px;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    cursor: pointer;
+    z-index: 150;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 0;
+}
+
+.hamburger-btn:hover {
+    background: var(--overlay-bg);
+    transform: scale(1.05);
+}
+
+.hamburger-line {
+    width: 20px;
+    height: 2px;
+    background: var(--text-primary);
+    border-radius: 2px;
+    transition: all 0.25s ease;
+}
+
+/* SIDEBAR BACKDROP */
+.sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 190;
+    animation: backdropIn 0.2s ease;
+}
+
+@keyframes backdropIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* DESKTOP LAYOUT (>= 1024px) — Sidebar is an overlay, no fixed margin */
 @media (min-width: 1024px) {
     .app-container {
-        flex-direction: row !important;
+        flex-direction: column !important;
         background: var(--bg-desktop);
         padding: 0;
     }
 
+    .hamburger-btn {
+        display: flex !important;
+    }
+
     .main-content {
-        margin-left: 260px !important;
-        width: calc(100% - 260px) !important;
+        margin-left: 0 !important;
+        width: 100% !important;
         max-width: 1400px !important;
         padding: 40px;
+        padding-left: 80px;
         min-height: 100vh;
         border-radius: 0;
         padding-bottom: 40px;
-        /* No bottom nav space needed on desktop */
-    }
-
-    .sidebar-collapsed .main-content {
-        margin-left: 80px !important;
-        width: calc(100% - 80px) !important;
     }
 }
-
 
 /* TABLET LAYOUT (768px - 1023px) */
 @media (min-width: 768px) and (max-width: 1023px) {
     .app-container {
-        flex-direction: row !important;
-        /* Sidebar on side for tablet too */
+        flex-direction: column !important;
         background: var(--bg-desktop);
     }
 
+    .hamburger-btn {
+        display: flex !important;
+    }
+
     .main-content {
-        margin-left: 80px !important;
-        /* Collapsed sidebar width for tablet */
-        width: calc(100% - 80px) !important;
+        margin-left: 0 !important;
+        width: 100% !important;
         padding: 30px;
+        padding-left: 80px;
         padding-bottom: 30px;
-        /* No bottom nav on tablet */
     }
 }
 
-
-
 /* GRID RESPONSIVENESS */
-/* Force Grid Columns via high specificity */
 body .responsive-grid {
     grid-template-columns: 1fr !important;
 }
@@ -84,8 +137,6 @@ body .responsive-grid {
         max-width: 1000px;
     }
 }
-
-
 
 /* SESSION PAGE CHAT CENTERING */
 .chat-container-responsive {
