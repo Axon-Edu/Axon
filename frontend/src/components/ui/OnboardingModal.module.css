@@ -1,0 +1,216 @@
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(12px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modalContent {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border-radius: 24px;
+    width: 90%;
+    max-width: 550px;
+    padding: 32px;
+    max-height: 85vh;
+    overflow-y: auto;
+    animation: slideUpScale 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Custom scrollbar */
+.modalContent::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modalContent::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border-radius: 10px;
+}
+
+@keyframes slideUpScale {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modalHeader {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.modalHeader h2 {
+    font-size: 28px;
+    font-weight: 700;
+    font-family: var(--font-heading);
+    background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+}
+
+.modalHeader p {
+    color: var(--text-secondary);
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.formContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.formRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.formGroup label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.textInput,
+.selectInput,
+.textArea {
+    width: 100%;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 14px 16px;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.textInput:focus,
+.selectInput:focus,
+.textArea:focus {
+    outline: none;
+    border-color: var(--accent-purple);
+    box-shadow: 0 0 0 3px rgba(184, 154, 245, 0.15);
+    background: var(--bg-tertiary);
+}
+
+.selectInput option {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.textArea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.chipContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.chip {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.chip:hover {
+    background: var(--overlay-bg);
+    border-color: var(--text-muted);
+    transform: translateY(-2px);
+}
+
+.chipSelected {
+    background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+    border-color: transparent;
+    color: #111;
+    font-weight: 700;
+    box-shadow: 0 4px 15px rgba(184, 154, 245, 0.3);
+}
+
+.chipSelected:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(184, 154, 245, 0.4);
+}
+
+.modalFooter {
+    margin-top: 16px;
+    display: flex;
+    justify-content: center;
+}
+
+.submitBtn {
+    background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+    color: #111;
+    border: none;
+    padding: 16px 32px;
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: var(--font-heading);
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 16px rgba(184, 154, 245, 0.3);
+}
+
+.submitBtn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 24px rgba(184, 154, 245, 0.4);
+}
+
+.submitBtn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+@media (max-width: 480px) {
+    .formRow {
+        grid-template-columns: 1fr;
+    }
+
+    .modalContent {
+        padding: 24px;
+        border-radius: 20px;
+    }
+}

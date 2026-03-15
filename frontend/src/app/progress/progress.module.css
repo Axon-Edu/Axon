@@ -1,0 +1,287 @@
+.container {
+    height: 100%;
+    background: var(--bg-primary);
+    padding: 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.header {
+    margin-bottom: 24px;
+}
+
+.pageTitle {
+    font-family: var(--font-heading);
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.headerSub {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+/* MASTERY CARD */
+.masteryCard {
+    background: var(--bg-secondary);
+    border-radius: 22px;
+    padding: 28px 20px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.ringContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.masteryQuickStats {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    justify-content: center;
+}
+
+.quickStat {
+    text-align: center;
+}
+
+.quickStatValue {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.quickStatLabel {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+}
+
+.quickStatDivider {
+    width: 1px;
+    height: 32px;
+    background: var(--border-color);
+}
+
+/* SECTION HEADERS */
+.sectionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    margin-top: 4px;
+}
+
+.sectionTitle {
+    font-family: var(--font-heading);
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.sectionMeta {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+/* WEEKLY ACTIVITY */
+.activityCard {
+    background: var(--bg-secondary);
+    border-radius: 18px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 24px;
+}
+
+.activityBars {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 100px;
+}
+
+.barCol {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    height: 100%;
+}
+
+.barTrack {
+    flex: 1;
+    width: 100%;
+    max-width: 32px;
+    border-radius: 8px;
+    background: var(--bg-tertiary);
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+}
+
+.barFill {
+    width: 100%;
+    border-radius: 8px;
+    transition: height 1s ease;
+    min-height: 4px;
+}
+
+.barLabel {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+/* CHAPTERS GRID */
+.chaptersGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.chapterCard {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    padding: 16px;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.chapterCard:hover:not(.chapterLocked) {
+    transform: translateX(4px);
+    border-color: var(--accent-purple);
+}
+
+.chapterLocked {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.chapterTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.chapterName {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.chapterMastery {
+    font-family: var(--font-heading);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.chapterProgressTrack {
+    height: 4px;
+    border-radius: 4px;
+    background: var(--bg-tertiary);
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.chapterProgressFill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s ease;
+}
+
+.chapterMeta {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+/* RECENT SESSIONS */
+.sessionsList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 30px;
+}
+
+.sessionItem {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: var(--bg-secondary);
+    border-radius: 14px;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.sessionItem:hover {
+    transform: translateX(4px);
+}
+
+.sessionIcon {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.sessionInfo {
+    flex: 1;
+}
+
+.sessionTopic {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.sessionMeta {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.sessionScore {
+    font-family: var(--font-heading);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent-green);
+}
+
+/* DESKTOP */
+@media (min-width: 1025px) {
+    .masteryCard {
+        flex-direction: row;
+        padding: 36px 40px;
+        gap: 40px;
+    }
+
+    .chaptersGrid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .activityBars {
+        height: 120px;
+    }
+
+    .barTrack {
+        max-width: 48px;
+    }
+}

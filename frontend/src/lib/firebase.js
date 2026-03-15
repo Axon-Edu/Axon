@@ -23,17 +23,25 @@ const firebaseConfig = {
     appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "",
 };
 
-// Initialize Firebase only on client side with valid config
+// Initialize Firebase
 let app = null;
 let auth = null;
 
-if (typeof window !== "undefined" && firebaseConfig.apiKey) {
-    app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
-    auth = getAuth(app);
+const isMockKey = firebaseConfig.apiKey === "mock_key" || !firebaseConfig.apiKey;
+
+if (typeof window !== "undefined" && !isMockKey) {
+    try {
+        app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
+        auth = getAuth(app);
+    } catch (e) {
+        console.warn("Firebase initialization skipped", e);
+    }
 }
+
 const googleProvider = new GoogleAuthProvider();
 
 export {
+    app,
     auth,
     googleProvider,
     signInWithPopup,
@@ -41,4 +49,5 @@ export {
     createUserWithEmailAndPassword,
     signOut,
     onAuthStateChanged,
+    isMockKey,
 };
